@@ -4,6 +4,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_favorites">Favorites</string>
     <string name="nav_cart">Cart</string>
+    <string name="nav_delivery">Delivery</string>
 
     <string name="restaurants_title">Restaurants</string>
     <string name="menu_title">Menu</string>
@@ -75,4 +76,30 @@
     <string name="max_addons_reached">You can choose up to %2$d from %1$s.</string>
 
     <string name="line_price">Each %1$s • Qty %2$d • Total %3$s</string>
+
+    <!-- Delivery tracking (simulated) -->
+    <string name="place_order">Place order</string>
+    <string name="delivery_tracking_title">Delivery tracking</string>
+    <string name="delivery_tracking_subtitle">From %1$s • %2$s</string>
+    <string name="delivery_tracking_subtitle_placeholder">From Restaurant • 2x Item</string>
+
+    <string name="delivery_empty_title">No active delivery</string>
+    <string name="delivery_empty_subtitle">Place an order from your cart to start tracking.</string>
+
+    <string name="delivery_cancel_order">Cancel order</string>
+
+    <string name="delivery_eta_in">Next update in %1$s</string>
+    <string name="delivery_eta_in_placeholder">Next update in 25s</string>
+    <string name="delivery_next_update_in">Next update in %1$s</string>
+    <string name="delivery_next_update_in_placeholder">Next update in 25s</string>
+    <string name="delivery_time_pending">Pending</string>
+
+    <string name="delivery_stage_icon">Delivery stage</string>
+
+    <!-- Notifications -->
+    <string name="delivery_notification_title">Delivery update • %1$s</string>
+    <string name="delivery_notification_body">Status: %1$s</string>
+
+    <!-- Home top bar badge -->
+    <string name="delivery_eta_badge">ETA %1$s</string>
 </resources>

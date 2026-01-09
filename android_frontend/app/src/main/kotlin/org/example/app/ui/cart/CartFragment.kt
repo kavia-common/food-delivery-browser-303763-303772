@@ -12,11 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import org.example.app.MainActivity
 import org.example.app.R
 import org.example.app.common.Formatters
 import org.example.app.data.cart.CartRepository
 import org.example.app.data.cart.CartTotals
 import org.example.app.data.cart.PromoApplyResult
+import org.example.app.data.delivery.DeliveryRepository
+import org.example.app.data.mock.MockData
 import org.example.app.data.models.CartLine
 import org.example.app.ui.menu.ItemOptionsBottomSheet
 
@@ -45,6 +48,7 @@ class CartFragment : Fragment() {
     private lateinit var taxValue: TextView
     private lateinit var totalValue: TextView
 
+    private lateinit var placeOrderButton: MaterialButton
     private lateinit var checkoutButton: MaterialButton
     private lateinit var checkoutHint: TextView
 
@@ -90,11 +94,30 @@ class CartFragment : Fragment() {
         taxValue = view.findViewById(R.id.taxValue)
         totalValue = view.findViewById(R.id.totalValue)
 
+        placeOrderButton = view.findViewById(R.id.placeOrderButton)
         checkoutButton = view.findViewById(R.id.checkoutButton)
         checkoutHint = view.findViewById(R.id.checkoutHint)
 
         checkoutButton.isEnabled = false
         checkoutHint.isVisible = true
+
+        placeOrderButton.setOnClickListener {
+            val lines = CartRepository.cartLines.value ?: emptyList()
+            if (lines.isEmpty()) return@setOnClickListener
+
+            // Pick restaurant name from mock data; fallback to first line's restaurant id.
+            val restaurantId = lines.first().item.restaurantId
+            val restaurantName = MockData.restaurants.firstOrNull { it.id == restaurantId }?.name ?: "Restaurant"
+
+            val created = DeliveryRepository.placeOrderFromCart(requireContext(), restaurantName)
+            if (created != null) {
+                // Clear cart after placing order to mimic real UX.
+                lines.forEach { CartRepository.remove(it) }
+
+                // Navigate to Delivery tab/screen.
+                (activity as? MainActivity)?.openDelivery()
+            }
+        }
 
         applyPromoButton.setOnClickListener {
             // Clear any previous error and attempt apply.
@@ -131,6 +154,8 @@ class CartFragment : Fragment() {
             val isEmpty = lines.isEmpty()
             emptyState.isVisible = isEmpty
             totalsContainer.isVisible = !isEmpty
+
+            placeOrderButton.isEnabled = !isEmpty
 
             // Edge case: empty cart disables promo apply.
             applyPromoButton.isEnabled = !isEmpty

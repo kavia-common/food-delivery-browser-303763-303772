@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import android.widget.TextView
+import androidx.core.view.isVisible
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -23,6 +25,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.example.app.MainActivity
 import org.example.app.R
+import org.example.app.data.delivery.DeliveryRepository
 import org.example.app.data.favorites.FavoritesRepository
 import org.example.app.data.mock.MockData
 import org.example.app.data.models.Restaurant
@@ -40,6 +43,7 @@ class HomeFragment : Fragment() {
     private lateinit var searchEditText: TextInputEditText
     private lateinit var filterChipGroup: ChipGroup
     private lateinit var sortButton: MaterialButton
+    private lateinit var deliveryEtaBadge: TextView
 
     private lateinit var sharedAppViewModel: SharedAppViewModel
 
@@ -92,6 +96,7 @@ class HomeFragment : Fragment() {
         searchEditText = view.findViewById(R.id.searchEditText)
         filterChipGroup = view.findViewById(R.id.filterChipGroup)
         sortButton = view.findViewById(R.id.sortButton)
+        deliveryEtaBadge = view.findViewById(R.id.homeDeliveryEtaBadge)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
@@ -137,6 +142,28 @@ class HomeFragment : Fragment() {
         sharedAppViewModel.homeVegOnly.observe(viewLifecycleOwner) { render() }
         sharedAppViewModel.homeSelectedCuisines.observe(viewLifecycleOwner) { render() }
         sharedAppViewModel.homeSortOption.observe(viewLifecycleOwner) { render() }
+
+        // Delivery badge: initialize repo and observe (safe; no-op if already initialized).
+        DeliveryRepository.initialize(requireContext())
+        DeliveryRepository.activeOrder.observe(viewLifecycleOwner) { order ->
+            deliveryEtaBadge.isVisible = order != null && order.currentStage != org.example.app.data.delivery.DeliveryStage.DELIVERED
+        }
+        DeliveryRepository.etaRemainingMs.observe(viewLifecycleOwner) { remaining ->
+            val order = DeliveryRepository.activeOrder.value
+            val show = order != null && order.currentStage != org.example.app.data.delivery.DeliveryStage.DELIVERED
+            deliveryEtaBadge.isVisible = show
+            if (show) {
+                val sec = ((remaining ?: 0L) / 1000L).coerceAtLeast(0L)
+                val text = if (sec >= 60) {
+                    val m = sec / 60
+                    val s = sec % 60
+                    getString(R.string.delivery_eta_badge, "${m}m ${s}s")
+                } else {
+                    getString(R.string.delivery_eta_badge, "${sec}s")
+                }
+                deliveryEtaBadge.text = text
+            }
+        }
 
         // Initial render after wiring everything.
         restoreUiFromPreferences()

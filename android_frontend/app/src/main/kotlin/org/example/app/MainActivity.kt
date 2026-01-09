@@ -8,9 +8,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.example.app.data.cart.CartRepository
+import org.example.app.data.delivery.DeliveryRepository
 import org.example.app.data.favorites.FavoritesRepository
 import org.example.app.data.preferences.AppPreferencesRepository
 import org.example.app.ui.cart.CartFragment
+import org.example.app.ui.delivery.DeliveryFragment
 import org.example.app.ui.favorites.FavoritesFragment
 import org.example.app.ui.home.HomeFragment
 import org.example.app.ui.shared.SharedAppViewModel
@@ -30,6 +32,7 @@ class MainActivity : AppCompatActivity() {
         CartRepository.initialize(this)
         FavoritesRepository.initialize(this)
         AppPreferencesRepository.initialize(this)
+        DeliveryRepository.initialize(this)
 
         // Apply the persisted theme mode as early as possible.
         applyThemeMode(AppPreferencesRepository.themeMode.value ?: AppPreferencesRepository.ThemeMode.SYSTEM)
@@ -71,6 +74,11 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
 
+                R.id.nav_delivery -> {
+                    navigateDelivery()
+                    true
+                }
+
                 else -> false
             }
         }
@@ -96,6 +104,12 @@ class MainActivity : AppCompatActivity() {
     private fun navigateCart() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, CartFragment.newInstance(), CartFragment.TAG)
+            .commit()
+    }
+
+    private fun navigateDelivery() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, DeliveryFragment.newInstance(), DeliveryFragment.TAG)
             .commit()
     }
 
@@ -129,5 +143,14 @@ class MainActivity : AppCompatActivity() {
     fun openCartTab() {
         bottomNav.selectedItemId = R.id.nav_cart
         navigateCart()
+    }
+
+    /**
+     * PUBLIC_INTERFACE
+     * Navigate to Delivery tracking screen/tab.
+     */
+    fun openDelivery() {
+        bottomNav.selectedItemId = R.id.nav_delivery
+        navigateDelivery()
     }
 }

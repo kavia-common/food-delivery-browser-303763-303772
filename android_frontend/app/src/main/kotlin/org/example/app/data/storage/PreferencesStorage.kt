@@ -96,6 +96,18 @@ class PreferencesStorage private constructor(
         putString(PREF_PREFIX + key, value)
     }
 
+    // PUBLIC_INTERFACE
+    fun loadActiveDeliveryOrderEncoded(): String? {
+        /** Load persisted active delivery order state (opaque encoded string). */
+        return getString(KEY_DELIVERY_ACTIVE_ORDER)
+    }
+
+    // PUBLIC_INTERFACE
+    fun saveActiveDeliveryOrderEncoded(encoded: String?) {
+        /** Persist active delivery order state; null removes. */
+        putString(KEY_DELIVERY_ACTIVE_ORDER, encoded)
+    }
+
     companion object {
         private const val PREFS_NAME = "food_delivery_prefs"
 
@@ -106,6 +118,9 @@ class PreferencesStorage private constructor(
         // Cart pricing persistence.
         private const val KEY_CART_PROMO = "cart_promo_v1"
         private const val KEY_CART_FEE_SETTINGS = "cart_fee_settings_v1"
+
+        // Delivery simulation persistence.
+        private const val KEY_DELIVERY_ACTIVE_ORDER = "delivery_active_order_v1"
 
         private const val PREF_PREFIX = "pref_"
 

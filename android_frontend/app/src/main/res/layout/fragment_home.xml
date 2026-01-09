@@ -21,6 +21,21 @@
             android:text="@string/restaurants_title"
             android:textAppearance="@style/TextAppearance.FoodDelivery.Title" />
 
+        <TextView
+            android:id="@+id/homeDeliveryEtaBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:paddingStart="@dimen/space_sm"
+            android:paddingEnd="@dimen/space_sm"
+            android:gravity="center"
+            android:text="@string/delivery_eta_in_placeholder"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+            android:textStyle="bold"
+            android:background="?attr/colorSurface"
+            android:textColor="?attr/colorOnSurface"
+            android:visibility="gone" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/sortButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"

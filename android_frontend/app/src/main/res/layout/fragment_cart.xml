@@ -276,10 +276,20 @@
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/checkoutButton"
+            android:id="@+id/placeOrderButton"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="@dimen/space_md"
+            android:text="@string/place_order"
+            app:icon="@drawable/ic_delivery"
+            app:iconPadding="@dimen/space_xs"
+            android:textAllCaps="false" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/checkoutButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="@dimen/space_sm"
             android:text="@string/checkout" />
 
         <TextView
