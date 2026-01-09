@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -13,7 +14,9 @@ import org.example.app.common.Formatters
 import org.example.app.data.models.Restaurant
 
 class RestaurantAdapter(
-    private val onClick: (Restaurant) -> Unit
+    private val onClick: (Restaurant) -> Unit,
+    private val isFavorited: (String) -> Boolean,
+    private val onToggleFavorite: (String) -> Unit
 ) : ListAdapter<Restaurant, RestaurantAdapter.VH>(Diff) {
 
     object Diff : DiffUtil.ItemCallback<Restaurant>() {
@@ -30,6 +33,7 @@ class RestaurantAdapter(
         val tags: TextView = itemView.findViewById(R.id.restaurantTags)
         val rating: TextView = itemView.findViewById(R.id.restaurantRating)
         val eta: TextView = itemView.findViewById(R.id.restaurantEta)
+        val favoriteToggle: ImageView = itemView.findViewById(R.id.favoriteToggle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -50,6 +54,16 @@ class RestaurantAdapter(
             holder.banner.setBackgroundColor(Color.parseColor(restaurant.bannerColorHex))
         } catch (_: Throwable) {
             holder.banner.setBackgroundColor(Color.LTGRAY)
+        }
+
+        val fav = isFavorited(restaurant.id)
+        holder.favoriteToggle.setImageResource(if (fav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
+
+        holder.favoriteToggle.setOnClickListener {
+            onToggleFavorite(restaurant.id)
+            // Optimistic UI update; fragments also observe repository and may re-submit list.
+            val nowFav = isFavorited(restaurant.id)
+            holder.favoriteToggle.setImageResource(if (nowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
         }
 
         holder.itemView.setOnClickListener { onClick(restaurant) }

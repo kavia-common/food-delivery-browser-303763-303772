@@ -18,7 +18,9 @@ class MenuItemAdapter(
     private val onAdd: (MenuItem) -> Unit,
     private val onInc: (MenuItem) -> Unit,
     private val onDec: (MenuItem) -> Unit,
-    private val getQuantity: (String) -> Int
+    private val getQuantity: (String) -> Int,
+    private val isFavorited: (String) -> Boolean,
+    private val onToggleFavorite: (String) -> Unit
 ) : ListAdapter<MenuItem, MenuItemAdapter.VH>(Diff) {
 
     object Diff : DiffUtil.ItemCallback<MenuItem>() {
@@ -31,6 +33,8 @@ class MenuItemAdapter(
         val name: TextView = itemView.findViewById(R.id.menuItemName)
         val desc: TextView = itemView.findViewById(R.id.menuItemDesc)
         val price: TextView = itemView.findViewById(R.id.menuItemPrice)
+
+        val favoriteToggle: ImageView = itemView.findViewById(R.id.favoriteToggle)
 
         val addButton: MaterialButton = itemView.findViewById(R.id.addButton)
 
@@ -52,6 +56,14 @@ class MenuItemAdapter(
         holder.desc.text = item.description
         holder.price.text = Formatters.moneyFromCents(item.priceCents)
         holder.vegIcon.setImageResource(if (item.isVeg) R.drawable.ic_veg else R.drawable.ic_nonveg)
+
+        val fav = isFavorited(item.id)
+        holder.favoriteToggle.setImageResource(if (fav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
+        holder.favoriteToggle.setOnClickListener {
+            onToggleFavorite(item.id)
+            val nowFav = isFavorited(item.id)
+            holder.favoriteToggle.setImageResource(if (nowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
+        }
 
         val q = getQuantity(item.id)
         holder.addButton.isVisible = q <= 0

@@ -14,6 +14,7 @@ import com.google.android.material.chip.ChipGroup
 import org.example.app.R
 import org.example.app.common.Formatters
 import org.example.app.data.cart.CartRepository
+import org.example.app.data.favorites.FavoritesRepository
 import org.example.app.data.mock.MockData
 
 class MenuFragment : Fragment() {
@@ -37,7 +38,9 @@ class MenuFragment : Fragment() {
                 val q = CartRepository.getQuantity(item.id)
                 CartRepository.updateQuantity(item, q - 1)
             },
-            getQuantity = { itemId -> CartRepository.getQuantity(itemId) }
+            getQuantity = { itemId -> CartRepository.getQuantity(itemId) },
+            isFavorited = { itemId -> FavoritesRepository.isMenuItemFavorited(itemId) },
+            onToggleFavorite = { itemId -> FavoritesRepository.toggleMenuItemFavorite(itemId) }
         )
     }
 
@@ -71,6 +74,11 @@ class MenuFragment : Fragment() {
 
         // Refresh quantities when cart changes.
         CartRepository.cartLines.observe(viewLifecycleOwner) {
+            adapter.notifyDataSetChanged()
+        }
+
+        // Refresh heart icons when favorites change.
+        FavoritesRepository.favoriteMenuItemIdsLive.observe(viewLifecycleOwner) {
             adapter.notifyDataSetChanged()
         }
     }

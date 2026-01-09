@@ -54,6 +54,15 @@
                 android:textStyle="bold" />
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/favoriteToggle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:src="@drawable/ic_heart_outline"
+            android:contentDescription="@string/favorite"
+            app:tint="@color/app_error" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/addButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"

@@ -13,6 +13,14 @@
         android:text="@string/restaurants_title"
         android:textAppearance="@style/TextAppearance.FoodDelivery.Title" />
 
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/favoritesOnlySwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        android:text="@string/favorites_only"
+        android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/restaurantRecyclerView"
         android:layout_width="match_parent"

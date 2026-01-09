@@ -75,6 +75,15 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/favoriteToggle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="@dimen/space_md"
+            android:src="@drawable/ic_heart_outline"
+            android:contentDescription="@string/favorite"
+            app:tint="@color/app_error" />
+
+        <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_chevron_right"

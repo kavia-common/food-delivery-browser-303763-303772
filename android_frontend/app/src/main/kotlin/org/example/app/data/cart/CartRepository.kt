@@ -1,18 +1,25 @@
 package org.example.app.data.cart
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.example.app.data.models.CartLine
 import org.example.app.data.models.MenuItem
+import org.example.app.data.storage.PreferencesStorage
+import org.example.app.data.storage.models.StoredCartLine
 import kotlin.math.max
 
 /**
- * In-memory cart repository (singleton).
+ * In-memory cart repository (singleton) with local persistence.
  *
  * Keeps cart state during app runtime. Configuration changes are handled via ViewModel
  * observing LiveData exposed here.
+ *
+ * Call initialize(context) once on app start to hydrate from persisted state.
  */
 object CartRepository {
+
+    private var storage: PreferencesStorage? = null
 
     private val linesByItemId: LinkedHashMap<String, CartLine> = LinkedHashMap()
 
@@ -24,6 +31,30 @@ object CartRepository {
 
     private const val DELIVERY_FEE_CENTS = 199
     private const val TAX_RATE = 0.08
+
+    // PUBLIC_INTERFACE
+    fun initialize(context: Context) {
+        /** Initialize repo from SharedPreferences. Safe to call multiple times. */
+        if (storage == null) storage = PreferencesStorage.from(context)
+        val st = storage ?: return
+
+        linesByItemId.clear()
+        st.loadCartLines().forEach { stored ->
+            val item = MenuItem(
+                id = stored.itemId,
+                restaurantId = stored.restaurantId,
+                categoryId = stored.categoryId,
+                name = stored.name,
+                description = stored.description,
+                priceCents = stored.priceCents,
+                isVeg = stored.isVeg
+            )
+            if (stored.quantity > 0) {
+                linesByItemId[item.id] = CartLine(item, stored.quantity)
+            }
+        }
+        publish(persist = false)
+    }
 
     // PUBLIC_INTERFACE
     fun add(item: MenuItem) {
@@ -79,9 +110,29 @@ object CartRepository {
         return computeSubtotalCents() + computeDeliveryFeeCents() + computeTaxCents()
     }
 
-    private fun publish() {
+    private fun publish(persist: Boolean = true) {
         val list = linesByItemId.values.toList()
         _cartLines.value = list
         _totalItemCount.value = list.sumOf { it.quantity }
+
+        if (persist) persistCart(list)
+    }
+
+    private fun persistCart(lines: List<CartLine>) {
+        // If initialize() wasn't called yet, skip persistence (no context available).
+        val st = storage ?: return
+        val storedLines = lines.map { line ->
+            StoredCartLine(
+                itemId = line.item.id,
+                restaurantId = line.item.restaurantId,
+                categoryId = line.item.categoryId,
+                name = line.item.name,
+                description = line.item.description,
+                priceCents = line.item.priceCents,
+                isVeg = line.item.isVeg,
+                quantity = line.quantity
+            )
+        }
+        st.saveCartLines(storedLines)
     }
 }
