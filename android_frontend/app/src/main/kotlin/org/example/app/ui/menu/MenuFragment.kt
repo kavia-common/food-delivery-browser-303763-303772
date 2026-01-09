@@ -136,11 +136,20 @@ class MenuFragment : Fragment() {
             initialConfiguration = ItemConfiguration(),
             initialQuantity = 1,
             isEditMode = false,
+            initialItemNote = "",
             listener = object : ItemOptionsBottomSheet.Listener {
-                override fun onConfirmed(item: MenuItem, configuration: ItemConfiguration, quantity: Int) {
+                override fun onConfirmed(item: MenuItem, configuration: ItemConfiguration, quantity: Int, itemNote: String) {
                     // quantity from sheet is 1 in menu flow; keep API flexible.
                     repeat(quantity.coerceAtLeast(1)) {
                         CartRepository.addConfigured(item, configuration)
+                    }
+                    // Apply note to the resulting line (notes do not impact totals).
+                    val keyLineQty = CartRepository.getLineQuantity(item.id, configuration)
+                    if (keyLineQty > 0) {
+                        CartRepository.updateLineItemNote(
+                            org.example.app.data.models.CartLine(item, configuration, keyLineQty),
+                            itemNote
+                        )
                     }
                 }
             }

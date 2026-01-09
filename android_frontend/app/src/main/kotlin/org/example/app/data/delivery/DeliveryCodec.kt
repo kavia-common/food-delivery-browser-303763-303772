@@ -2,7 +2,7 @@ package org.example.app.data.delivery
 
 /**
  * Encoding format (v1):
- * id|restaurantName|itemsSummary|createdAtMs|currentStage|nextTransitionAtMs|stageTimeline
+ * id|restaurantName|itemsSummary|createdAtMs|currentStage|nextTransitionAtMs|stageTimeline|orderInstructions
  *
  * stageTimeline = comma-delimited "STAGE=timestampMs" entries, e.g.:
  * PLACED=1700000000000,ACCEPTED=1700000010000
@@ -29,7 +29,8 @@ internal object DeliveryCodec {
             order.createdAtMs.toString(),
             order.currentStage.name,
             (order.nextTransitionAtMs ?: -1L).toString(),
-            stageTimeline
+            stageTimeline,
+            order.orderInstructions
         ).joinToString(separator = FIELD_SEP.toString()) { escape(it) }
     }
 
@@ -47,6 +48,7 @@ internal object DeliveryCodec {
             val nextAtRaw = parts[5].toLongOrNull() ?: return null
             val nextAt = nextAtRaw.takeIf { it > 0L }
             val timelineRaw = parts[6]
+            val instructions = if (parts.size >= 8) parts[7] else ""
 
             val timeline = decodeStageTimeline(timelineRaw)
 
@@ -59,7 +61,8 @@ internal object DeliveryCodec {
                 createdAtMs = createdAt,
                 currentStage = stage,
                 stageTimestampsMs = timeline,
-                nextTransitionAtMs = nextAt
+                nextTransitionAtMs = nextAt,
+                orderInstructions = instructions
             )
         } catch (_: Throwable) {
             null

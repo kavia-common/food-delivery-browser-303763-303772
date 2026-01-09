@@ -97,6 +97,18 @@ class PreferencesStorage private constructor(
     }
 
     // PUBLIC_INTERFACE
+    fun loadCartOrderInstructions(): String? {
+        /** Load persisted per-order special instructions (cart-level). */
+        return getString(KEY_CART_ORDER_INSTRUCTIONS)
+    }
+
+    // PUBLIC_INTERFACE
+    fun saveCartOrderInstructions(instructions: String?) {
+        /** Persist per-order special instructions (cart-level); null/blank removes. */
+        putString(KEY_CART_ORDER_INSTRUCTIONS, instructions?.takeIf { it.isNotBlank() })
+    }
+
+    // PUBLIC_INTERFACE
     fun loadActiveDeliveryOrderEncoded(): String? {
         /** Load persisted active delivery order state (opaque encoded string). */
         return getString(KEY_DELIVERY_ACTIVE_ORDER)
@@ -114,6 +126,7 @@ class PreferencesStorage private constructor(
         private const val KEY_FAVORITE_RESTAURANTS = "favorites_restaurants_v1"
         private const val KEY_FAVORITE_MENU_ITEMS = "favorites_menu_items_v1"
         private const val KEY_CART_LINES = "cart_lines_v1"
+        private const val KEY_CART_ORDER_INSTRUCTIONS = "cart_order_instructions_v1"
 
         // Cart pricing persistence.
         private const val KEY_CART_PROMO = "cart_promo_v1"

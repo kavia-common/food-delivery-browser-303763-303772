@@ -26,7 +26,7 @@ import org.example.app.data.models.computeOptionsDeltaCents
 class ItemOptionsBottomSheet : BottomSheetDialogFragment() {
 
     interface Listener {
-        fun onConfirmed(item: MenuItem, configuration: ItemConfiguration, quantity: Int)
+        fun onConfirmed(item: MenuItem, configuration: ItemConfiguration, quantity: Int, itemNote: String)
     }
 
     private var listener: Listener? = null
@@ -35,6 +35,7 @@ class ItemOptionsBottomSheet : BottomSheetDialogFragment() {
     private var initialConfiguration: ItemConfiguration = ItemConfiguration()
     private var initialQuantity: Int = 1
     private var isEditMode: Boolean = false
+    private var initialItemNote: String = ""
 
     private val selectedVariantOptionIds: MutableMap<String, String> = LinkedHashMap()
     private val selectedAddOnOptionIds: MutableSet<String> = LinkedHashSet()
@@ -47,12 +48,16 @@ class ItemOptionsBottomSheet : BottomSheetDialogFragment() {
     private lateinit var cancelButton: MaterialButton
     private lateinit var confirmButton: MaterialButton
 
+    private lateinit var itemNoteInputLayout: com.google.android.material.textfield.TextInputLayout
+    private lateinit var itemNoteEditText: com.google.android.material.textfield.TextInputEditText
+
     // PUBLIC_INTERFACE
     fun bind(
         item: MenuItem,
         initialConfiguration: ItemConfiguration,
         initialQuantity: Int,
         isEditMode: Boolean,
+        initialItemNote: String,
         listener: Listener
     ) {
         /** Bind sheet with the menu item and initial selections. Call before show(). */
@@ -60,6 +65,7 @@ class ItemOptionsBottomSheet : BottomSheetDialogFragment() {
         this.initialConfiguration = initialConfiguration
         this.initialQuantity = initialQuantity
         this.isEditMode = isEditMode
+        this.initialItemNote = initialItemNote
         this.listener = listener
 
         selectedVariantOptionIds.clear()
@@ -81,9 +87,15 @@ class ItemOptionsBottomSheet : BottomSheetDialogFragment() {
         cancelButton = view.findViewById(R.id.optionsCancel)
         confirmButton = view.findViewById(R.id.optionsConfirm)
 
+        itemNoteInputLayout = view.findViewById(R.id.itemNoteInputLayout)
+        itemNoteEditText = view.findViewById(R.id.itemNoteEditText)
+
         title.text = item.name
         subtitle.text = item.description
         subtitle.isVisible = item.description.isNotBlank()
+
+        itemNoteEditText.setText(initialItemNote)
+        itemNoteEditText.setSelection(itemNoteEditText.text?.length ?: 0)
 
         optionsContainer.removeAllViews()
 
@@ -264,7 +276,9 @@ class ItemOptionsBottomSheet : BottomSheetDialogFragment() {
             selectedAddOnOptionIds = selectedAddOnOptionIds.toSet()
         )
 
-        listener?.onConfirmed(item, configuration, initialQuantity)
+        val note = itemNoteEditText.text?.toString().orEmpty().trim().take(140)
+
+        listener?.onConfirmed(item, configuration, initialQuantity, note)
         dismissAllowingStateLoss()
     }
 

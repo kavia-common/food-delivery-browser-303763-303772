@@ -38,6 +38,10 @@ class CartFragment : Fragment() {
     private lateinit var removePromoButton: MaterialButton
     private lateinit var promoAppliedHint: TextView
 
+    // Order instructions UI
+    private lateinit var orderInstructionsLayout: TextInputLayout
+    private lateinit var orderInstructionsEditText: TextInputEditText
+
     // Breakdown UI
     private lateinit var subtotalValue: TextView
     private lateinit var discountRow: View
@@ -85,6 +89,9 @@ class CartFragment : Fragment() {
         removePromoButton = view.findViewById(R.id.removePromoButton)
         promoAppliedHint = view.findViewById(R.id.promoAppliedHint)
 
+        orderInstructionsLayout = view.findViewById(R.id.orderInstructionsLayout)
+        orderInstructionsEditText = view.findViewById(R.id.orderInstructionsEditText)
+
         subtotalValue = view.findViewById(R.id.subtotalValue)
         discountRow = view.findViewById(R.id.discountRow)
         discountLabel = view.findViewById(R.id.discountLabel)
@@ -109,10 +116,16 @@ class CartFragment : Fragment() {
             val restaurantId = lines.first().item.restaurantId
             val restaurantName = MockData.restaurants.firstOrNull { it.id == restaurantId }?.name ?: "Restaurant"
 
+            // Ensure latest instructions are persisted before placing.
+            CartRepository.setOrderInstructions(orderInstructionsEditText.text?.toString().orEmpty())
+
             val created = DeliveryRepository.placeOrderFromCart(requireContext(), restaurantName)
             if (created != null) {
                 // Clear cart after placing order to mimic real UX.
                 lines.forEach { CartRepository.remove(it) }
+
+                // Clear per-order instructions only after a successful order placement.
+                CartRepository.clearOrderInstructions()
 
                 // Navigate to Delivery tab/screen.
                 (activity as? MainActivity)?.openDelivery()
@@ -148,6 +161,16 @@ class CartFragment : Fragment() {
             CartRepository.removePromo()
         }
 
+        // Persist instructions when user finishes editing.
+        orderInstructionsEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {
+                val raw = orderInstructionsEditText.text?.toString().orEmpty()
+                // Keep UI error-free; counter enforces length; repository trims.
+                orderInstructionsLayout.error = null
+                CartRepository.setOrderInstructions(raw)
+            }
+        }
+
         // Observe changes and render.
         CartRepository.cartLines.observe(viewLifecycleOwner) { lines ->
             adapter.submitList(lines)
@@ -160,6 +183,17 @@ class CartFragment : Fragment() {
             // Edge case: empty cart disables promo apply.
             applyPromoButton.isEnabled = !isEmpty
             removePromoButton.isEnabled = !isEmpty
+
+            // Disable instructions input when cart is empty (matches “per-order” behavior).
+            orderInstructionsLayout.isEnabled = !isEmpty
+        }
+
+        CartRepository.orderInstructions.observe(viewLifecycleOwner) { instructions ->
+            val current = orderInstructionsEditText.text?.toString().orEmpty()
+            if (current != instructions) {
+                orderInstructionsEditText.setText(instructions)
+                orderInstructionsEditText.setSelection(instructions.length)
+            }
         }
 
         CartRepository.appliedPromo.observe(viewLifecycleOwner) { promo ->
@@ -196,17 +230,34 @@ class CartFragment : Fragment() {
             initialConfiguration = line.configuration,
             initialQuantity = line.quantity,
             isEditMode = true,
+            initialItemNote = line.itemNote,
             listener = object : ItemOptionsBottomSheet.Listener {
-                override fun onConfirmed(item: org.example.app.data.models.MenuItem, configuration: org.example.app.data.models.ItemConfiguration, quantity: Int) {
+                override fun onConfirmed(
+                    item: org.example.app.data.models.MenuItem,
+                    configuration: org.example.app.data.models.ItemConfiguration,
+                    quantity: Int,
+                    itemNote: String
+                ) {
                     // Replace old line with new configuration preserving quantity.
                     CartRepository.remove(line)
                     CartRepository.addConfigured(item, configuration)
+
+                    val newLineQty = CartRepository.getLineQuantity(item.id, configuration)
+
                     // addConfigured adds 1; adjust to desired quantity
-                    if (quantity > 1) {
-                        val newLineQty = CartRepository.getLineQuantity(item.id, configuration)
+                    if (quantity != newLineQty) {
                         CartRepository.updateQuantity(
                             org.example.app.data.models.CartLine(item, configuration, newLineQty),
                             quantity
+                        )
+                    }
+
+                    // Persist note on the resulting line.
+                    val finalQty = CartRepository.getLineQuantity(item.id, configuration)
+                    if (finalQty > 0) {
+                        CartRepository.updateLineItemNote(
+                            org.example.app.data.models.CartLine(item, configuration, finalQty),
+                            itemNote
                         )
                     }
                 }

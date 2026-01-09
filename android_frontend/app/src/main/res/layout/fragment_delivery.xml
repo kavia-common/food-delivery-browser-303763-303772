@@ -78,6 +78,15 @@
                 android:text="@string/delivery_tracking_subtitle_placeholder" />
 
             <TextView
+                android:id="@+id/deliveryOrderInstructions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_xs"
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/deliveryHeaderEta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

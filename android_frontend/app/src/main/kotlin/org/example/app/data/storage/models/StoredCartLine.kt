@@ -19,5 +19,6 @@ data class StoredCartLine(
     val quantity: Int,
     val configurationKey: String = "",
     val selectedVariantOptionIds: String = "",
-    val selectedAddOnOptionIds: String = ""
+    val selectedAddOnOptionIds: String = "",
+    val itemNote: String = ""
 )

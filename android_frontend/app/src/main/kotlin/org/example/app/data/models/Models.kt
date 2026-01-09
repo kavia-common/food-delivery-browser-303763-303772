@@ -109,7 +109,8 @@ data class ItemConfiguration(
 data class CartLine(
     val item: MenuItem,
     val configuration: ItemConfiguration,
-    val quantity: Int
+    val quantity: Int,
+    val itemNote: String = ""
 )
 
 /**

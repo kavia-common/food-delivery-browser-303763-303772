@@ -134,6 +134,44 @@
             android:layout_marginBottom="@dimen/space_md"
             android:background="@color/app_divider" />
 
+        <!-- Order instructions -->
+        <TextView
+            android:id="@+id/orderInstructionsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/order_instructions_title"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.Subtitle"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/orderInstructionsLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:hint="@string/order_instructions_hint"
+            app:boxBackgroundColor="?attr/colorSurface"
+            app:counterEnabled="true"
+            app:counterMaxLength="140"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="1dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/orderInstructionsEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLength="140"
+                android:maxLines="3" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_md"
+            android:layout_marginBottom="@dimen/space_md"
+            android:background="@color/app_divider" />
+
         <!-- Breakdown section -->
         <TextView
             android:id="@+id/breakdownTitle"

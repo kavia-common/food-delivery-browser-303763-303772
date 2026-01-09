@@ -33,12 +33,14 @@ class CartAdapter(
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView = itemView.findViewById(R.id.cartItemName)
         val options: TextView = itemView.findViewById(R.id.cartItemOptions)
+        val note: TextView = itemView.findViewById(R.id.cartItemNote)
         val priceEach: TextView = itemView.findViewById(R.id.cartItemPriceEach)
         val lineTotal: TextView = itemView.findViewById(R.id.cartItemLineTotal)
 
         val minus: MaterialButton = itemView.findViewById(R.id.cartMinusButton)
         val plus: MaterialButton = itemView.findViewById(R.id.cartPlusButton)
         val qty: TextView = itemView.findViewById(R.id.cartQtyText)
+        val edit: MaterialButton = itemView.findViewById(R.id.cartEditButton)
         val remove: MaterialButton = itemView.findViewById(R.id.cartRemoveButton)
     }
 
@@ -56,6 +58,14 @@ class CartAdapter(
         holder.options.isVisible = summary.isNotBlank()
         holder.options.text = summary
 
+        val note = line.itemNote.trim()
+        holder.note.isVisible = note.isNotBlank()
+        holder.note.text = if (note.isNotBlank()) {
+            holder.itemView.context.getString(R.string.item_note_prefix, note)
+        } else {
+            ""
+        }
+
         val unitPrice = line.item.priceCents + computeOptionsDeltaCents(line.item, line.configuration)
         holder.priceEach.text = Formatters.moneyFromCents(unitPrice)
         holder.qty.text = line.quantity.toString()
@@ -63,9 +73,10 @@ class CartAdapter(
 
         holder.plus.setOnClickListener { onInc(line) }
         holder.minus.setOnClickListener { onDec(line) }
+        holder.edit.setOnClickListener { onEdit(line) }
         holder.remove.setOnClickListener { onRemove(line) }
 
-        // Tap row to edit options (if available).
+        // Tap row to edit options/notes (if available).
         holder.itemView.setOnClickListener { onEdit(line) }
     }
 }

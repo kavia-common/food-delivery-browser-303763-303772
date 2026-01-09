@@ -33,5 +33,6 @@ data class StoredDeliveryOrder(
     val createdAtMs: Long,
     val currentStage: DeliveryStage,
     val stageTimestampsMs: Map<DeliveryStage, Long>,
-    val nextTransitionAtMs: Long?
+    val nextTransitionAtMs: Long?,
+    val orderInstructions: String = ""
 )

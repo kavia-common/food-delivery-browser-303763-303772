@@ -9,7 +9,7 @@ import org.example.app.data.storage.models.StoredCartLine
  * Encoding used:
  * - String sets: pipe-delimited with escaping
  * - Cart lines (v2): newline-delimited
- *   "itemId|restaurantId|categoryId|name|description|priceCents|isVeg|quantity|configurationKey|selectedVariantOptionIds|selectedAddOnOptionIds"
+ *   "itemId|restaurantId|categoryId|name|description|priceCents|isVeg|quantity|configurationKey|selectedVariantOptionIds|selectedAddOnOptionIds|itemNote"
  * - Cart lines (v1 legacy): newline-delimited
  *   "itemId|restaurantId|categoryId|name|description|priceCents|isVeg|quantity"
  * - Applied promo: "code|kind|value"
@@ -49,7 +49,8 @@ internal object SafeCodec {
                 l.quantity.toString(),
                 l.configurationKey,
                 l.selectedVariantOptionIds,
-                l.selectedAddOnOptionIds
+                l.selectedAddOnOptionIds,
+                l.itemNote
             ).joinToString(separator = FIELD_SEP.toString()) { escape(it) }
         }
     }
@@ -82,6 +83,7 @@ internal object SafeCodec {
                         val configurationKey = if (parts.size >= 9) unescape(parts[8]) else ""
                         val selectedVariantOptionIds = if (parts.size >= 10) unescape(parts[9]) else ""
                         val selectedAddOnOptionIds = if (parts.size >= 11) unescape(parts[10]) else ""
+                        val itemNote = if (parts.size >= 12) unescape(parts[11]) else ""
 
                         StoredCartLine(
                             itemId = itemId,
@@ -94,7 +96,8 @@ internal object SafeCodec {
                             quantity = quantity,
                             configurationKey = configurationKey,
                             selectedVariantOptionIds = selectedVariantOptionIds,
-                            selectedAddOnOptionIds = selectedAddOnOptionIds
+                            selectedAddOnOptionIds = selectedAddOnOptionIds,
+                            itemNote = itemNote
                         )
                     } catch (_: Throwable) {
                         null

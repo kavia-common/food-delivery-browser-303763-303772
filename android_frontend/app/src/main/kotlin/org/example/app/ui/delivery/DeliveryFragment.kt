@@ -31,6 +31,7 @@ class DeliveryFragment : Fragment() {
 
     private lateinit var headerTitle: TextView
     private lateinit var headerSubtitle: TextView
+    private lateinit var headerInstructions: TextView
     private lateinit var headerEta: TextView
     private lateinit var headerProgress: ProgressBar
     private lateinit var cancelButton: MaterialButton
@@ -54,6 +55,7 @@ class DeliveryFragment : Fragment() {
 
         headerTitle = view.findViewById(R.id.deliveryHeaderTitle)
         headerSubtitle = view.findViewById(R.id.deliveryHeaderSubtitle)
+        headerInstructions = view.findViewById(R.id.deliveryOrderInstructions)
         headerEta = view.findViewById(R.id.deliveryHeaderEta)
         headerProgress = view.findViewById(R.id.deliveryHeaderProgress)
         cancelButton = view.findViewById(R.id.cancelOrderButton)
@@ -83,6 +85,14 @@ class DeliveryFragment : Fragment() {
 
         headerTitle.text = getString(R.string.delivery_tracking_title)
         headerSubtitle.text = getString(R.string.delivery_tracking_subtitle, order.restaurantName, order.itemsSummary)
+
+        val instructions = order.orderInstructions.trim()
+        headerInstructions.isVisible = instructions.isNotBlank()
+        headerInstructions.text = if (instructions.isNotBlank()) {
+            getString(R.string.order_instructions_display, instructions)
+        } else {
+            ""
+        }
 
         val stageIndex = order.currentStage.ordinal
         val progressPct = ((stageIndex + 1) * 100 / DeliveryStage.entries.size).coerceIn(0, 100)

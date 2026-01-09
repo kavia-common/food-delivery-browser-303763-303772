@@ -29,6 +29,9 @@ object CartRepository {
     private val _cartLines = MutableLiveData<List<CartLine>>(emptyList())
     val cartLines: LiveData<List<CartLine>> = _cartLines
 
+    private val _orderInstructions = MutableLiveData("")
+    val orderInstructions: LiveData<String> = _orderInstructions
+
     private val _totalItemCount = MutableLiveData(0)
     val totalItemCount: LiveData<Int> = _totalItemCount
 
@@ -85,9 +88,16 @@ object CartRepository {
 
             val key = buildLineKey(item.id, configuration)
             if (stored.quantity > 0) {
-                linesByKey[key] = CartLine(item = item, configuration = configuration, quantity = stored.quantity)
+                linesByKey[key] = CartLine(
+                    item = item,
+                    configuration = configuration,
+                    quantity = stored.quantity,
+                    itemNote = stored.itemNote
+                )
             }
         }
+
+        _orderInstructions.value = st.loadCartOrderInstructions().orEmpty()
 
         // Restore persisted pricing settings (promo + fees).
         _appliedPromo.value = st.loadCartPromo()
@@ -100,6 +110,12 @@ object CartRepository {
         // If cart is empty, promo should not be active (avoid confusing restore).
         if (linesByKey.isEmpty()) {
             _appliedPromo.value = null
+        }
+
+        // If cart is empty, also clear any persisted instructions to avoid stale carryover.
+        if (linesByKey.isEmpty()) {
+            _orderInstructions.value = ""
+            storage?.saveCartOrderInstructions(null)
         }
 
         publish(persist = false)
@@ -117,7 +133,12 @@ object CartRepository {
         val key = buildLineKey(item.id, configuration)
         val existing = linesByKey[key]
         val newQ = (existing?.quantity ?: 0) + 1
-        linesByKey[key] = CartLine(item = item, configuration = configuration, quantity = newQ)
+        linesByKey[key] = CartLine(
+            item = item,
+            configuration = configuration,
+            quantity = newQ,
+            itemNote = existing?.itemNote.orEmpty()
+        )
         publish()
     }
 
@@ -139,10 +160,17 @@ object CartRepository {
 
     // PUBLIC_INTERFACE
     fun updateQuantity(line: CartLine, quantity: Int) {
-        /** Set line quantity (<=0 removes). Preserves configuration. */
+        /** Set line quantity (<=0 removes). Preserves configuration and note. */
         val q = max(0, quantity)
         val key = buildLineKey(line.item.id, line.configuration)
-        if (q <= 0) linesByKey.remove(key) else linesByKey[key] = line.copy(quantity = q)
+        val existing = linesByKey[key]
+        if (q <= 0) {
+            linesByKey.remove(key)
+        } else {
+            // Prefer existing stored note (source of truth) if present.
+            val note = existing?.itemNote ?: line.itemNote
+            linesByKey[key] = line.copy(quantity = q, itemNote = note)
+        }
         publish()
     }
 
@@ -271,6 +299,41 @@ object CartRepository {
         return computeTotalsInternal().totalCents
     }
 
+    // PUBLIC_INTERFACE
+    fun setOrderInstructions(raw: String) {
+        /**
+         * Set cart-level special instructions (persisted across restarts until next order is placed).
+         *
+         * Trims whitespace and enforces a max length for UX consistency.
+         */
+        val trimmed = raw.trim().take(MAX_NOTE_LENGTH)
+        _orderInstructions.value = trimmed
+        storage?.saveCartOrderInstructions(trimmed.takeIf { it.isNotBlank() })
+    }
+
+    // PUBLIC_INTERFACE
+    fun clearOrderInstructions() {
+        /** Clear cart-level special instructions and persist removal. */
+        _orderInstructions.value = ""
+        storage?.saveCartOrderInstructions(null)
+    }
+
+    // PUBLIC_INTERFACE
+    fun updateLineItemNote(line: CartLine, rawNote: String) {
+        /**
+         * Update a cart line's per-item note.
+         *
+         * Notes do not affect totals. Notes are cleared only when a cart line is removed.
+         */
+        val note = rawNote.trim().take(MAX_NOTE_LENGTH)
+        val key = buildLineKey(line.item.id, line.configuration)
+        val existing = linesByKey[key] ?: return
+        linesByKey[key] = existing.copy(itemNote = note)
+        publish()
+    }
+
+    private const val MAX_NOTE_LENGTH = 140
+
     private fun publish(persist: Boolean = true) {
         val list = linesByKey.values.toList()
         _cartLines.value = list
@@ -323,7 +386,8 @@ object CartRepository {
                 quantity = line.quantity,
                 configurationKey = line.configuration.stableKey(),
                 selectedVariantOptionIds = encodeVariantSelectionMap(line.configuration.selectedVariantOptionIds),
-                selectedAddOnOptionIds = encodeAddOnSelectionSet(line.configuration.selectedAddOnOptionIds)
+                selectedAddOnOptionIds = encodeAddOnSelectionSet(line.configuration.selectedAddOnOptionIds),
+                itemNote = line.itemNote
             )
         }
         st.saveCartLines(storedLines)

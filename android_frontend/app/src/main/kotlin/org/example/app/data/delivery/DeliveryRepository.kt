@@ -72,7 +72,8 @@ object DeliveryRepository {
             createdAtMs = now,
             currentStage = DeliveryStage.PLACED,
             stageTimestampsMs = mapOf(DeliveryStage.PLACED to now),
-            nextTransitionAtMs = now + nextDelayMs()
+            nextTransitionAtMs = now + nextDelayMs(),
+            orderInstructions = (CartRepository.orderInstructions.value ?: "").trim()
         )
 
         persistAndPublish(placed)

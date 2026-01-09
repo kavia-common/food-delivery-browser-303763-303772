@@ -102,4 +102,14 @@
 
     <!-- Home top bar badge -->
     <string name="delivery_eta_badge">ETA %1$s</string>
+
+    <!-- Order customization -->
+    <string name="order_instructions_title">Special instructions</string>
+    <string name="order_instructions_hint">e.g., Ring the doorbell, leave at door</string>
+    <string name="order_instructions_display">Special instructions: %1$s</string>
+
+    <string name="item_note_hint">Add a note for this item (optional)</string>
+    <string name="item_note_prefix">Note: %1$s</string>
+
+    <string name="edit">Edit</string>
 </resources>
