@@ -57,4 +57,22 @@
     <string name="theme_system">System default</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
+
+    <!-- Item customization / options -->
+    <string name="customizable">Customizable</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="required">Required</string>
+
+    <string name="choose_up_to">Choose up to %1$d</string>
+    <string name="choose_at_least">Choose at least %1$d</string>
+    <string name="choose_between">Choose %1$d–%2$d</string>
+    <string name="choose_exactly">Choose exactly %1$d</string>
+
+    <string name="please_choose_variant">Please choose %1$s.</string>
+    <string name="please_choose_addons_min">Please choose at least %2$d from %1$s.</string>
+    <string name="max_addons_reached">You can choose up to %2$d from %1$s.</string>
+
+    <string name="line_price">Each %1$s • Qty %2$d • Total %3$s</string>
 </resources>

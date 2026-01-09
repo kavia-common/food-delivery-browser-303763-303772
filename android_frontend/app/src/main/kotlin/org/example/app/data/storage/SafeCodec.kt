@@ -8,7 +8,10 @@ import org.example.app.data.storage.models.StoredCartLine
 /**
  * Encoding used:
  * - String sets: pipe-delimited with escaping
- * - Cart lines: newline-delimited "itemId|restaurantId|categoryId|name|description|priceCents|isVeg|quantity"
+ * - Cart lines (v2): newline-delimited
+ *   "itemId|restaurantId|categoryId|name|description|priceCents|isVeg|quantity|configurationKey|selectedVariantOptionIds|selectedAddOnOptionIds"
+ * - Cart lines (v1 legacy): newline-delimited
+ *   "itemId|restaurantId|categoryId|name|description|priceCents|isVeg|quantity"
  * - Applied promo: "code|kind|value"
  * - Fee settings: "deliveryFeeCents|serviceFeeCents|taxRate"
  *
@@ -43,7 +46,10 @@ internal object SafeCodec {
                 l.description,
                 l.priceCents.toString(),
                 l.isVeg.toString(),
-                l.quantity.toString()
+                l.quantity.toString(),
+                l.configurationKey,
+                l.selectedVariantOptionIds,
+                l.selectedAddOnOptionIds
             ).joinToString(separator = FIELD_SEP.toString()) { escape(it) }
         }
     }
@@ -72,6 +78,11 @@ internal object SafeCodec {
 
                         if (itemId.isBlank() || quantity <= 0) return@mapNotNull null
 
+                        // Backward compatible optional fields (v2+).
+                        val configurationKey = if (parts.size >= 9) unescape(parts[8]) else ""
+                        val selectedVariantOptionIds = if (parts.size >= 10) unescape(parts[9]) else ""
+                        val selectedAddOnOptionIds = if (parts.size >= 11) unescape(parts[10]) else ""
+
                         StoredCartLine(
                             itemId = itemId,
                             restaurantId = restaurantId,
@@ -80,7 +91,10 @@ internal object SafeCodec {
                             description = description,
                             priceCents = priceCents,
                             isVeg = isVeg,
-                            quantity = quantity
+                            quantity = quantity,
+                            configurationKey = configurationKey,
+                            selectedVariantOptionIds = selectedVariantOptionIds,
+                            selectedAddOnOptionIds = selectedAddOnOptionIds
                         )
                     } catch (_: Throwable) {
                         null

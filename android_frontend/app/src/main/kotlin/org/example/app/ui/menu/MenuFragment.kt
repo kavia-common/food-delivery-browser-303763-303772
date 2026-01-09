@@ -11,11 +11,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import org.example.app.MainActivity
 import org.example.app.R
 import org.example.app.common.Formatters
 import org.example.app.data.cart.CartRepository
 import org.example.app.data.favorites.FavoritesRepository
 import org.example.app.data.mock.MockData
+import org.example.app.data.models.ItemConfiguration
+import org.example.app.data.models.MenuItem
 
 class MenuFragment : Fragment() {
 
@@ -32,11 +35,24 @@ class MenuFragment : Fragment() {
         restaurantId = requireArguments().getString(ARG_RESTAURANT_ID).orEmpty()
 
         adapter = MenuItemAdapter(
-            onAdd = { item -> CartRepository.add(item) },
-            onInc = { item -> CartRepository.add(item) },
+            onItemClick = { item -> openOptionsAndAdd(item) },
+            onAdd = { item -> openOptionsAndAdd(item) },
+            onInc = { item ->
+                // If item has options, increasing should go through the picker to avoid ambiguity.
+                if (item.variantGroups.isNotEmpty() || item.addOnGroups.isNotEmpty()) {
+                    openOptionsAndAdd(item)
+                } else {
+                    CartRepository.add(item)
+                }
+            },
             onDec = { item ->
-                val q = CartRepository.getQuantity(item.id)
-                CartRepository.updateQuantity(item, q - 1)
+                // For configurable items, decrementing is ambiguous (which line?). We route to cart.
+                if (item.variantGroups.isNotEmpty() || item.addOnGroups.isNotEmpty()) {
+                    (activity as? MainActivity)?.openCartTab()
+                } else {
+                    val q = CartRepository.getQuantity(item.id)
+                    CartRepository.updateQuantity(item, q - 1)
+                }
             },
             getQuantity = { itemId -> CartRepository.getQuantity(itemId) },
             isFavorited = { itemId -> FavoritesRepository.isMenuItemFavorited(itemId) },
@@ -111,6 +127,25 @@ class MenuFragment : Fragment() {
             }
             chipGroup.addView(chip)
         }
+    }
+
+    private fun openOptionsAndAdd(item: MenuItem) {
+        val sheet = ItemOptionsBottomSheet.newInstance()
+        sheet.bind(
+            item = item,
+            initialConfiguration = ItemConfiguration(),
+            initialQuantity = 1,
+            isEditMode = false,
+            listener = object : ItemOptionsBottomSheet.Listener {
+                override fun onConfirmed(item: MenuItem, configuration: ItemConfiguration, quantity: Int) {
+                    // quantity from sheet is 1 in menu flow; keep API flexible.
+                    repeat(quantity.coerceAtLeast(1)) {
+                        CartRepository.addConfigured(item, configuration)
+                    }
+                }
+            }
+        )
+        sheet.show(parentFragmentManager, "ItemOptionsBottomSheet")
     }
 
     companion object {

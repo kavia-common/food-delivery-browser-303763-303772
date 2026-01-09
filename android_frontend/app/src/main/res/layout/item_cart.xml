@@ -23,6 +23,15 @@
             android:textAppearance="@style/TextAppearance.FoodDelivery.Subtitle"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/cartItemOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

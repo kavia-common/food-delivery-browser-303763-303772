@@ -15,6 +15,7 @@ import org.example.app.common.Formatters
 import org.example.app.data.models.MenuItem
 
 class MenuItemAdapter(
+    private val onItemClick: (MenuItem) -> Unit,
     private val onAdd: (MenuItem) -> Unit,
     private val onInc: (MenuItem) -> Unit,
     private val onDec: (MenuItem) -> Unit,
@@ -33,6 +34,7 @@ class MenuItemAdapter(
         val name: TextView = itemView.findViewById(R.id.menuItemName)
         val desc: TextView = itemView.findViewById(R.id.menuItemDesc)
         val price: TextView = itemView.findViewById(R.id.menuItemPrice)
+        val customizableHint: TextView = itemView.findViewById(R.id.menuItemCustomizableHint)
 
         val favoriteToggle: ImageView = itemView.findViewById(R.id.favoriteToggle)
 
@@ -57,6 +59,10 @@ class MenuItemAdapter(
         holder.price.text = Formatters.moneyFromCents(item.priceCents)
         holder.vegIcon.setImageResource(if (item.isVeg) R.drawable.ic_veg else R.drawable.ic_nonveg)
 
+        val hasOptions = item.variantGroups.isNotEmpty() || item.addOnGroups.isNotEmpty()
+        holder.customizableHint.isVisible = hasOptions
+        holder.customizableHint.text = holder.itemView.context.getString(R.string.customizable)
+
         val fav = isFavorited(item.id)
         holder.favoriteToggle.setImageResource(if (fav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
         holder.favoriteToggle.setOnClickListener {
@@ -65,7 +71,7 @@ class MenuItemAdapter(
             holder.favoriteToggle.setImageResource(if (nowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
         }
 
-        val q = getQuantity(item.id)
+        val q = getQuantity(item.id) // total across configurations
         holder.addButton.isVisible = q <= 0
         holder.qtyContainer.isVisible = q > 0
         holder.qtyText.text = q.toString()
@@ -73,5 +79,8 @@ class MenuItemAdapter(
         holder.addButton.setOnClickListener { onAdd(item) }
         holder.plusButton.setOnClickListener { onInc(item) }
         holder.minusButton.setOnClickListener { onDec(item) }
+
+        // Tap anywhere on row to customize/add.
+        holder.itemView.setOnClickListener { onItemClick(item) }
     }
 }

@@ -18,6 +18,7 @@ import org.example.app.data.cart.CartRepository
 import org.example.app.data.cart.CartTotals
 import org.example.app.data.cart.PromoApplyResult
 import org.example.app.data.models.CartLine
+import org.example.app.ui.menu.ItemOptionsBottomSheet
 
 class CartFragment : Fragment() {
 
@@ -51,9 +52,10 @@ class CartFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         adapter = CartAdapter(
-            onInc = { line -> CartRepository.add(line.item) },
-            onDec = { line -> CartRepository.updateQuantity(line.item, line.quantity - 1) },
-            onRemove = { line -> CartRepository.remove(line.item) }
+            onInc = { line -> CartRepository.updateQuantity(line, line.quantity + 1) },
+            onDec = { line -> CartRepository.updateQuantity(line, line.quantity - 1) },
+            onRemove = { line -> CartRepository.remove(line) },
+            onEdit = { line -> openEditOptions(line) }
         )
     }
 
@@ -153,6 +155,39 @@ class CartFragment : Fragment() {
         CartRepository.totals.observe(viewLifecycleOwner) { totals ->
             renderTotals(totals)
         }
+    }
+
+    private fun openEditOptions(line: CartLine) {
+        val item = line.item
+
+        // If item has no option metadata (e.g., restored from persistence without groups),
+        // editing is not meaningful. Keep it safe by no-op.
+        val hasOptions = item.variantGroups.isNotEmpty() || item.addOnGroups.isNotEmpty()
+        if (!hasOptions) return
+
+        val sheet = ItemOptionsBottomSheet.newInstance()
+        sheet.bind(
+            item = item,
+            initialConfiguration = line.configuration,
+            initialQuantity = line.quantity,
+            isEditMode = true,
+            listener = object : ItemOptionsBottomSheet.Listener {
+                override fun onConfirmed(item: org.example.app.data.models.MenuItem, configuration: org.example.app.data.models.ItemConfiguration, quantity: Int) {
+                    // Replace old line with new configuration preserving quantity.
+                    CartRepository.remove(line)
+                    CartRepository.addConfigured(item, configuration)
+                    // addConfigured adds 1; adjust to desired quantity
+                    if (quantity > 1) {
+                        val newLineQty = CartRepository.getLineQuantity(item.id, configuration)
+                        CartRepository.updateQuantity(
+                            org.example.app.data.models.CartLine(item, configuration, newLineQty),
+                            quantity
+                        )
+                    }
+                }
+            }
+        )
+        sheet.show(parentFragmentManager, "EditItemOptionsBottomSheet")
     }
 
     private fun renderTotals(totals: CartTotals) {

@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import org.example.app.data.models.CartLine
+import org.example.app.data.models.ItemConfiguration
 import org.example.app.data.models.MenuItem
+import org.example.app.data.models.computeOptionsDeltaCents
 import org.example.app.data.storage.PreferencesStorage
 import org.example.app.data.storage.models.StoredCartLine
 import kotlin.math.max
@@ -21,7 +23,8 @@ object CartRepository {
 
     private var storage: PreferencesStorage? = null
 
-    private val linesByItemId: LinkedHashMap<String, CartLine> = LinkedHashMap()
+    // Keyed by (itemId + configurationKey) to allow multiple distinct configurations per item.
+    private val linesByKey: LinkedHashMap<String, CartLine> = LinkedHashMap()
 
     private val _cartLines = MutableLiveData<List<CartLine>>(emptyList())
     val cartLines: LiveData<List<CartLine>> = _cartLines
@@ -61,8 +64,10 @@ object CartRepository {
         if (storage == null) storage = PreferencesStorage.from(context)
         val st = storage ?: return
 
-        linesByItemId.clear()
+        linesByKey.clear()
         st.loadCartLines().forEach { stored ->
+            // Restore basic item fields. Note: mock data defines option groups; but for persistence we
+            // reconstruct only the base item + persisted configuration ids.
             val item = MenuItem(
                 id = stored.itemId,
                 restaurantId = stored.restaurantId,
@@ -72,8 +77,15 @@ object CartRepository {
                 priceCents = stored.priceCents,
                 isVeg = stored.isVeg
             )
+
+            val configuration = ItemConfiguration(
+                selectedVariantOptionIds = parseVariantSelectionMap(stored.selectedVariantOptionIds),
+                selectedAddOnOptionIds = parseAddOnSelectionSet(stored.selectedAddOnOptionIds)
+            )
+
+            val key = buildLineKey(item.id, configuration)
             if (stored.quantity > 0) {
-                linesByItemId[item.id] = CartLine(item, stored.quantity)
+                linesByKey[key] = CartLine(item = item, configuration = configuration, quantity = stored.quantity)
             }
         }
 
@@ -86,7 +98,7 @@ object CartRepository {
         }
 
         // If cart is empty, promo should not be active (avoid confusing restore).
-        if (linesByItemId.isEmpty()) {
+        if (linesByKey.isEmpty()) {
             _appliedPromo.value = null
         }
 
@@ -95,32 +107,76 @@ object CartRepository {
 
     // PUBLIC_INTERFACE
     fun add(item: MenuItem) {
-        /** Add one quantity for a menu item. */
-        val existing = linesByItemId[item.id]
+        /** Add one quantity for a menu item with default (first) required selections. */
+        addConfigured(item, defaultConfigurationFor(item))
+    }
+
+    // PUBLIC_INTERFACE
+    fun addConfigured(item: MenuItem, configuration: ItemConfiguration) {
+        /** Add one quantity for a menu item with a specific configuration. */
+        val key = buildLineKey(item.id, configuration)
+        val existing = linesByKey[key]
         val newQ = (existing?.quantity ?: 0) + 1
-        linesByItemId[item.id] = CartLine(item, newQ)
+        linesByKey[key] = CartLine(item = item, configuration = configuration, quantity = newQ)
+        publish()
+    }
+
+    // PUBLIC_INTERFACE
+    fun remove(line: CartLine) {
+        /** Remove the line item entirely by configuration. */
+        val key = buildLineKey(line.item.id, line.configuration)
+        linesByKey.remove(key)
         publish()
     }
 
     // PUBLIC_INTERFACE
     fun remove(item: MenuItem) {
-        /** Remove the line item entirely. */
-        linesByItemId.remove(item.id)
+        /** Remove ALL lines for a menu item (all configurations). */
+        val keysToRemove = linesByKey.keys.filter { it.startsWith(item.id + "#") }
+        keysToRemove.forEach { linesByKey.remove(it) }
+        publish()
+    }
+
+    // PUBLIC_INTERFACE
+    fun updateQuantity(line: CartLine, quantity: Int) {
+        /** Set line quantity (<=0 removes). Preserves configuration. */
+        val q = max(0, quantity)
+        val key = buildLineKey(line.item.id, line.configuration)
+        if (q <= 0) linesByKey.remove(key) else linesByKey[key] = line.copy(quantity = q)
         publish()
     }
 
     // PUBLIC_INTERFACE
     fun updateQuantity(item: MenuItem, quantity: Int) {
-        /** Set item quantity (<=0 removes). */
+        /**
+         * Legacy API: if called, it updates the default configuration line only.
+         * (Menu UI uses configuration picker when items have options.)
+         */
+        val conf = defaultConfigurationFor(item)
+        val key = buildLineKey(item.id, conf)
         val q = max(0, quantity)
-        if (q <= 0) linesByItemId.remove(item.id) else linesByItemId[item.id] = CartLine(item, q)
+        if (q <= 0) linesByKey.remove(key) else linesByKey[key] = CartLine(item = item, configuration = conf, quantity = q)
         publish()
     }
 
     // PUBLIC_INTERFACE
     fun getQuantity(itemId: String): Int {
-        /** Get current quantity for an item ID. */
-        return linesByItemId[itemId]?.quantity ?: 0
+        /** Get total quantity across all configurations for an item ID. */
+        return linesByKey.values.filter { it.item.id == itemId }.sumOf { it.quantity }
+    }
+
+    // PUBLIC_INTERFACE
+    fun getLineQuantity(itemId: String, configuration: ItemConfiguration): Int {
+        /** Get quantity for a specific (itemId + configuration). */
+        val key = buildLineKey(itemId, configuration)
+        return linesByKey[key]?.quantity ?: 0
+    }
+
+    // PUBLIC_INTERFACE
+    fun getDefaultLine(itemId: String): CartLine? {
+        /** Get the cart line for the default configuration (if any). */
+        val key = buildLineKey(itemId, ItemConfiguration())
+        return linesByKey[key]
     }
 
     // PUBLIC_INTERFACE
@@ -133,7 +189,7 @@ object CartRepository {
          * - Blank code: invalid.
          * - Invalid/expired codes return an error result and do not change the active promo.
          */
-        if (linesByItemId.isEmpty()) return PromoApplyResult.CART_EMPTY
+        if (linesByKey.isEmpty()) return PromoApplyResult.CART_EMPTY
 
         val code = rawCode.trim().uppercase()
         if (code.isBlank()) return PromoApplyResult.INVALID
@@ -167,8 +223,11 @@ object CartRepository {
 
     // PUBLIC_INTERFACE
     fun computeSubtotalCents(): Int {
-        /** Sum of (price * quantity). */
-        return linesByItemId.values.sumOf { it.item.priceCents * it.quantity }
+        /** Sum of (configured price * quantity). */
+        return linesByKey.values.sumOf { line ->
+            val unit = line.item.priceCents + computeOptionsDeltaCents(line.item, line.configuration)
+            unit * line.quantity
+        }
     }
 
     // PUBLIC_INTERFACE
@@ -187,20 +246,20 @@ object CartRepository {
     fun computeDeliveryFeeCents(): Int {
         /** Flat delivery fee; 0 if cart empty. */
         val fees = _feeSettings.value ?: defaultFeeSettings()
-        return if (linesByItemId.isEmpty()) 0 else fees.deliveryFeeCents
+        return if (linesByKey.isEmpty()) 0 else fees.deliveryFeeCents
     }
 
     // PUBLIC_INTERFACE
     fun computeServiceFeeCents(): Int {
         /** Flat service fee; 0 if cart empty. */
         val fees = _feeSettings.value ?: defaultFeeSettings()
-        return if (linesByItemId.isEmpty()) 0 else fees.serviceFeeCents
+        return if (linesByKey.isEmpty()) 0 else fees.serviceFeeCents
     }
 
     // PUBLIC_INTERFACE
     fun computeTaxCents(): Int {
         /** Mock tax percent applied on (subtotal - discount) (i.e., taxed on discounted items). */
-        if (linesByItemId.isEmpty()) return 0
+        if (linesByKey.isEmpty()) return 0
         val fees = _feeSettings.value ?: defaultFeeSettings()
         val taxableBase = (computeSubtotalCents() - computeDiscountCents()).coerceAtLeast(0)
         return (taxableBase * fees.taxRate).toInt()
@@ -213,7 +272,7 @@ object CartRepository {
     }
 
     private fun publish(persist: Boolean = true) {
-        val list = linesByItemId.values.toList()
+        val list = linesByKey.values.toList()
         _cartLines.value = list
         _totalItemCount.value = list.sumOf { it.quantity }
 
@@ -229,7 +288,7 @@ object CartRepository {
     }
 
     private fun computeTotalsInternal(): CartTotals {
-        val list = linesByItemId.values.toList()
+        val list = linesByKey.values.toList()
         val itemCount = list.sumOf { it.quantity }
         val subtotal = computeSubtotalCents()
         val discount = computeDiscountCents()
@@ -261,7 +320,10 @@ object CartRepository {
                 description = line.item.description,
                 priceCents = line.item.priceCents,
                 isVeg = line.item.isVeg,
-                quantity = line.quantity
+                quantity = line.quantity,
+                configurationKey = line.configuration.stableKey(),
+                selectedVariantOptionIds = encodeVariantSelectionMap(line.configuration.selectedVariantOptionIds),
+                selectedAddOnOptionIds = encodeAddOnSelectionSet(line.configuration.selectedAddOnOptionIds)
             )
         }
         st.saveCartLines(storedLines)
@@ -290,6 +352,57 @@ object CartRepository {
             "EXPIRED" -> null
             else -> null
         }
+    }
+
+    private fun buildLineKey(itemId: String, configuration: ItemConfiguration): String {
+        return "$itemId#${configuration.stableKey()}"
+    }
+
+    private fun encodeVariantSelectionMap(map: Map<String, String>): String {
+        if (map.isEmpty()) return ""
+        return map.toList()
+            .sortedBy { it.first }
+            .joinToString(separator = ",") { (g, o) -> "$g=$o" }
+    }
+
+    private fun parseVariantSelectionMap(encoded: String): Map<String, String> {
+        if (encoded.isBlank()) return emptyMap()
+        return encoded.split(",")
+            .mapNotNull { token ->
+                val trimmed = token.trim()
+                if (trimmed.isBlank()) return@mapNotNull null
+                val idx = trimmed.indexOf("=")
+                if (idx <= 0 || idx >= trimmed.length - 1) return@mapNotNull null
+                val g = trimmed.substring(0, idx)
+                val o = trimmed.substring(idx + 1)
+                if (g.isBlank() || o.isBlank()) null else g to o
+            }
+            .toMap()
+    }
+
+    private fun encodeAddOnSelectionSet(set: Set<String>): String {
+        if (set.isEmpty()) return ""
+        return set.toList().sorted().joinToString(separator = ",")
+    }
+
+    private fun parseAddOnSelectionSet(encoded: String): Set<String> {
+        if (encoded.isBlank()) return emptySet()
+        return encoded.split(",").mapNotNull { it.trim().takeIf { s -> s.isNotEmpty() } }.toSet()
+    }
+
+    private fun defaultConfigurationFor(item: MenuItem): ItemConfiguration {
+        // Select the first option for required variant groups by default.
+        val variantSelections = LinkedHashMap<String, String>()
+        item.variantGroups.forEach { group ->
+            if (group.required) {
+                val first = group.options.firstOrNull()
+                if (first != null) variantSelections[group.id] = first.id
+            }
+        }
+        return ItemConfiguration(
+            selectedVariantOptionIds = variantSelections,
+            selectedAddOnOptionIds = emptySet()
+        )
     }
 }
 
