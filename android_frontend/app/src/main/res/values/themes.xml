@@ -1,0 +1,36 @@
+<resources>
+    <style name="Theme.FoodDelivery" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/app_primary</item>
+        <item name="colorPrimaryVariant">@color/app_primary</item>
+        <item name="colorSecondary">@color/app_success</item>
+        <item name="colorSecondaryVariant">@color/app_success</item>
+
+        <item name="android:colorBackground">@color/app_background</item>
+        <item name="colorSurface">@color/app_surface</item>
+        <item name="colorOnSurface">@color/app_text</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+
+        <item name="colorError">@color/app_error</item>
+
+        <item name="textAppearanceBody1">@style/TextAppearance.FoodDelivery.Body</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.FoodDelivery.BodySmall</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.FoodDelivery.Subtitle</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.FoodDelivery.Title</item>
+    </style>
+
+    <style name="TextAppearance.FoodDelivery.Title" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="android:textColor">@color/app_text</item>
+    </style>
+
+    <style name="TextAppearance.FoodDelivery.Subtitle" parent="TextAppearance.MaterialComponents.Subtitle1">
+        <item name="android:textColor">@color/app_text</item>
+    </style>
+
+    <style name="TextAppearance.FoodDelivery.Body" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/app_text</item>
+    </style>
+
+    <style name="TextAppearance.FoodDelivery.BodySmall" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/app_text_muted</item>
+    </style>
+</resources>

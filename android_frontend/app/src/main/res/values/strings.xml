@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Food Delivery</string>
+
+    <string name="nav_home">Home</string>
+    <string name="nav_cart">Cart</string>
+
+    <string name="restaurants_title">Restaurants</string>
+    <string name="menu_title">Menu</string>
+    <string name="cart_title">Your Cart</string>
+
+    <string name="add">Add</string>
+    <string name="plus">+</string>
+    <string name="minus">−</string>
+
+    <string name="subtotal">Subtotal</string>
+    <string name="delivery_fee">Delivery fee</string>
+    <string name="tax">Tax</string>
+    <string name="total">Total</string>
+
+    <string name="checkout">Checkout</string>
+    <string name="checkout_disabled_hint">Checkout is disabled (frontend-only demo)</string>
+
+    <string name="empty_cart_title">Your cart is empty</string>
+    <string name="empty_cart_subtitle">Add items from a restaurant menu.</string>
+</resources>

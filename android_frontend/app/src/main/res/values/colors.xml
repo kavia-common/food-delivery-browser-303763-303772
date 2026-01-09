@@ -1,0 +1,18 @@
+<resources>
+    <!-- Brand palette (from requirements) -->
+    <color name="app_primary">#3B82F6</color>
+    <color name="app_secondary">#64748B</color>
+    <color name="app_success">#06B6D4</color>
+    <color name="app_error">#EF4444</color>
+    <color name="app_background">#F9FAFB</color>
+    <color name="app_surface">#FFFFFF</color>
+    <color name="app_text">#111827</color>
+
+    <!-- Helpers -->
+    <color name="app_divider">#E5E7EB</color>
+    <color name="app_text_muted">#6B7280</color>
+
+    <!-- Bottom nav tint -->
+    <color name="bottom_nav_item_selected">#3B82F6</color>
+    <color name="bottom_nav_item_unselected">#64748B</color>
+</resources>
