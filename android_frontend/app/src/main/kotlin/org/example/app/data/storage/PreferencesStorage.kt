@@ -61,6 +61,30 @@ class PreferencesStorage private constructor(
     }
 
     // PUBLIC_INTERFACE
+    fun loadCartPromo(): org.example.app.data.cart.AppliedPromo? {
+        /** Load persisted cart promo settings. Returns null when missing/malformed. */
+        return SafeCodec.decodeAppliedPromo(getString(KEY_CART_PROMO))
+    }
+
+    // PUBLIC_INTERFACE
+    fun saveCartPromo(promo: org.example.app.data.cart.AppliedPromo?) {
+        /** Persist cart promo settings; null removes. */
+        putString(KEY_CART_PROMO, promo?.let { SafeCodec.encodeAppliedPromo(it) })
+    }
+
+    // PUBLIC_INTERFACE
+    fun loadCartFeeSettings(): org.example.app.data.cart.FeeSettings? {
+        /** Load persisted cart fee settings. Returns null when missing/malformed. */
+        return SafeCodec.decodeFeeSettings(getString(KEY_CART_FEE_SETTINGS))
+    }
+
+    // PUBLIC_INTERFACE
+    fun saveCartFeeSettings(settings: org.example.app.data.cart.FeeSettings?) {
+        /** Persist cart fee settings; null removes. */
+        putString(KEY_CART_FEE_SETTINGS, settings?.let { SafeCodec.encodeFeeSettings(it) })
+    }
+
+    // PUBLIC_INTERFACE
     fun loadPreferenceString(key: String): String? {
         /** Stub: load a preference string for future use. */
         return getString(PREF_PREFIX + key)
@@ -78,6 +102,11 @@ class PreferencesStorage private constructor(
         private const val KEY_FAVORITE_RESTAURANTS = "favorites_restaurants_v1"
         private const val KEY_FAVORITE_MENU_ITEMS = "favorites_menu_items_v1"
         private const val KEY_CART_LINES = "cart_lines_v1"
+
+        // Cart pricing persistence.
+        private const val KEY_CART_PROMO = "cart_promo_v1"
+        private const val KEY_CART_FEE_SETTINGS = "cart_fee_settings_v1"
+
         private const val PREF_PREFIX = "pref_"
 
         // PUBLIC_INTERFACE

@@ -1,11 +1,16 @@
 package org.example.app.data.storage
 
+import org.example.app.data.cart.AppliedPromo
+import org.example.app.data.cart.FeeSettings
+import org.example.app.data.cart.PromoKind
 import org.example.app.data.storage.models.StoredCartLine
 
 /**
  * Encoding used:
  * - String sets: pipe-delimited with escaping
  * - Cart lines: newline-delimited "itemId|restaurantId|categoryId|name|description|priceCents|isVeg|quantity"
+ * - Applied promo: "code|kind|value"
+ * - Fee settings: "deliveryFeeCents|serviceFeeCents|taxRate"
  *
  * NOTE: This is not a general-purpose serializer, just a lightweight stable format.
  */
@@ -84,6 +89,65 @@ internal object SafeCodec {
                 .toList()
         } catch (_: Throwable) {
             emptyList()
+        }
+    }
+
+    fun encodeAppliedPromo(promo: AppliedPromo): String {
+        return listOf(
+            promo.code,
+            promo.kind.name,
+            promo.value.toString()
+        ).joinToString(separator = FIELD_SEP.toString()) { escape(it) }
+    }
+
+    fun decodeAppliedPromo(encoded: String?): AppliedPromo? {
+        if (encoded.isNullOrBlank()) return null
+        return try {
+            val parts = splitEscaped(encoded, FIELD_SEP)
+            if (parts.size < 3) return null
+
+            val code = unescape(parts[0]).trim()
+            val kindStr = unescape(parts[1]).trim()
+            val value = unescape(parts[2]).trim().toIntOrNull() ?: return null
+
+            val kind = PromoKind.entries.firstOrNull { it.name == kindStr } ?: return null
+            if (code.isBlank()) return null
+
+            AppliedPromo(code = code, kind = kind, value = value)
+        } catch (_: Throwable) {
+            null
+        }
+    }
+
+    fun encodeFeeSettings(settings: FeeSettings): String {
+        // Keep tax rate as a string; parse defensively.
+        return listOf(
+            settings.deliveryFeeCents.toString(),
+            settings.serviceFeeCents.toString(),
+            settings.taxRate.toString()
+        ).joinToString(separator = FIELD_SEP.toString()) { escape(it) }
+    }
+
+    fun decodeFeeSettings(encoded: String?): FeeSettings? {
+        if (encoded.isNullOrBlank()) return null
+        return try {
+            val parts = splitEscaped(encoded, FIELD_SEP)
+            if (parts.size < 3) return null
+
+            val deliveryFee = unescape(parts[0]).toIntOrNull() ?: return null
+            val serviceFee = unescape(parts[1]).toIntOrNull() ?: return null
+            val taxRate = unescape(parts[2]).toDoubleOrNull() ?: return null
+
+            // Basic sanity constraints.
+            if (deliveryFee < 0 || serviceFee < 0 || taxRate < 0.0) return null
+
+            FeeSettings(
+                deliveryFeeCents = deliveryFee,
+                serviceFeeCents = serviceFee,
+                taxRate = taxRate
+            )
+        } catch (_: Throwable) {
+            null
         }
     }
 

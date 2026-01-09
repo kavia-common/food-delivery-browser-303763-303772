@@ -14,9 +14,24 @@
     <string name="minus">−</string>
 
     <string name="subtotal">Subtotal</string>
+    <string name="discount">Discount</string>
+    <string name="discount_with_code">Discount (%1$s)</string>
     <string name="delivery_fee">Delivery fee</string>
+    <string name="service_fee">Service fee</string>
     <string name="tax">Tax</string>
     <string name="total">Total</string>
+
+    <string name="promo_code">Promo code</string>
+    <string name="promo_hint">Enter code (e.g., SAVE10)</string>
+    <string name="apply">Apply</string>
+    <string name="remove">Remove</string>
+    <string name="promo_applied">Applied: %1$s</string>
+
+    <string name="promo_cart_empty">Add items before applying a promo code.</string>
+    <string name="promo_invalid">Enter a valid promo code.</string>
+    <string name="promo_invalid_or_expired">This promo code is invalid or expired.</string>
+
+    <string name="breakdown">Breakdown</string>
 
     <string name="checkout">Checkout</string>
     <string name="checkout_disabled_hint">Checkout is disabled (frontend-only demo)</string>

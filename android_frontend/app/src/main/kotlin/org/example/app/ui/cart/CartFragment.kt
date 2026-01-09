@@ -10,9 +10,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import org.example.app.R
 import org.example.app.common.Formatters
 import org.example.app.data.cart.CartRepository
+import org.example.app.data.cart.CartTotals
+import org.example.app.data.cart.PromoApplyResult
 import org.example.app.data.models.CartLine
 
 class CartFragment : Fragment() {
@@ -23,8 +27,20 @@ class CartFragment : Fragment() {
     private lateinit var emptyState: View
     private lateinit var totalsContainer: View
 
+    // Promo UI
+    private lateinit var promoInputLayout: TextInputLayout
+    private lateinit var promoEditText: TextInputEditText
+    private lateinit var applyPromoButton: MaterialButton
+    private lateinit var removePromoButton: MaterialButton
+    private lateinit var promoAppliedHint: TextView
+
+    // Breakdown UI
     private lateinit var subtotalValue: TextView
+    private lateinit var discountRow: View
+    private lateinit var discountLabel: TextView
+    private lateinit var discountValue: TextView
     private lateinit var deliveryValue: TextView
+    private lateinit var serviceFeeValue: TextView
     private lateinit var taxValue: TextView
     private lateinit var totalValue: TextView
 
@@ -57,8 +73,18 @@ class CartFragment : Fragment() {
         emptyState = view.findViewById(R.id.emptyState)
         totalsContainer = view.findViewById(R.id.totalsContainer)
 
+        promoInputLayout = view.findViewById(R.id.promoInputLayout)
+        promoEditText = view.findViewById(R.id.promoEditText)
+        applyPromoButton = view.findViewById(R.id.applyPromoButton)
+        removePromoButton = view.findViewById(R.id.removePromoButton)
+        promoAppliedHint = view.findViewById(R.id.promoAppliedHint)
+
         subtotalValue = view.findViewById(R.id.subtotalValue)
+        discountRow = view.findViewById(R.id.discountRow)
+        discountLabel = view.findViewById(R.id.discountLabel)
+        discountValue = view.findViewById(R.id.discountValue)
         deliveryValue = view.findViewById(R.id.deliveryValue)
+        serviceFeeValue = view.findViewById(R.id.serviceFeeValue)
         taxValue = view.findViewById(R.id.taxValue)
         totalValue = view.findViewById(R.id.totalValue)
 
@@ -68,22 +94,87 @@ class CartFragment : Fragment() {
         checkoutButton.isEnabled = false
         checkoutHint.isVisible = true
 
+        applyPromoButton.setOnClickListener {
+            // Clear any previous error and attempt apply.
+            promoInputLayout.error = null
+            val result = CartRepository.applyPromoCode(promoEditText.text?.toString().orEmpty())
+            when (result) {
+                PromoApplyResult.APPLIED -> {
+                    promoInputLayout.error = null
+                }
+
+                PromoApplyResult.CART_EMPTY -> {
+                    promoInputLayout.error = getString(R.string.promo_cart_empty)
+                }
+
+                PromoApplyResult.INVALID -> {
+                    promoInputLayout.error = getString(R.string.promo_invalid)
+                }
+
+                PromoApplyResult.INVALID_OR_EXPIRED -> {
+                    promoInputLayout.error = getString(R.string.promo_invalid_or_expired)
+                }
+            }
+        }
+
+        removePromoButton.setOnClickListener {
+            promoInputLayout.error = null
+            promoEditText.setText("")
+            CartRepository.removePromo()
+        }
+
+        // Observe changes and render.
         CartRepository.cartLines.observe(viewLifecycleOwner) { lines ->
-            render(lines)
+            adapter.submitList(lines)
+            val isEmpty = lines.isEmpty()
+            emptyState.isVisible = isEmpty
+            totalsContainer.isVisible = !isEmpty
+
+            // Edge case: empty cart disables promo apply.
+            applyPromoButton.isEnabled = !isEmpty
+            removePromoButton.isEnabled = !isEmpty
+        }
+
+        CartRepository.appliedPromo.observe(viewLifecycleOwner) { promo ->
+            val hasPromo = promo != null
+            promoAppliedHint.isVisible = hasPromo
+            promoAppliedHint.text = if (promo != null) {
+                getString(R.string.promo_applied, promo.code)
+            } else {
+                ""
+            }
+            // When promo is active, keep the input populated with the code for clarity.
+            if (promo != null && promoEditText.text?.toString()?.trim()?.equals(promo.code, ignoreCase = true) != true) {
+                promoEditText.setText(promo.code)
+                promoEditText.setSelection(promo.code.length)
+            }
+        }
+
+        CartRepository.totals.observe(viewLifecycleOwner) { totals ->
+            renderTotals(totals)
         }
     }
 
-    private fun render(lines: List<CartLine>) {
-        adapter.submitList(lines)
+    private fun renderTotals(totals: CartTotals) {
+        subtotalValue.text = Formatters.moneyFromCents(totals.subtotalCents)
 
-        val isEmpty = lines.isEmpty()
-        emptyState.isVisible = isEmpty
-        totalsContainer.isVisible = !isEmpty
+        val hasDiscount = totals.discountCents > 0
+        discountRow.isVisible = hasDiscount
+        if (hasDiscount) {
+            val promo = CartRepository.appliedPromo.value
+            discountLabel.text = if (promo != null) {
+                getString(R.string.discount_with_code, promo.code)
+            } else {
+                getString(R.string.discount)
+            }
+            // Show discount as negative.
+            discountValue.text = "-" + Formatters.moneyFromCents(totals.discountCents)
+        }
 
-        subtotalValue.text = Formatters.moneyFromCents(CartRepository.computeSubtotalCents())
-        deliveryValue.text = Formatters.moneyFromCents(CartRepository.computeDeliveryFeeCents())
-        taxValue.text = Formatters.moneyFromCents(CartRepository.computeTaxCents())
-        totalValue.text = Formatters.moneyFromCents(CartRepository.computeTotalCents())
+        deliveryValue.text = Formatters.moneyFromCents(totals.deliveryFeeCents)
+        serviceFeeValue.text = Formatters.moneyFromCents(totals.serviceFeeCents)
+        taxValue.text = Formatters.moneyFromCents(totals.taxCents)
+        totalValue.text = Formatters.moneyFromCents(totals.totalCents)
     }
 
     companion object {

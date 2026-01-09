@@ -61,9 +61,95 @@
         android:background="@color/app_surface"
         android:padding="@dimen/space_md">
 
+        <!-- Promo section -->
+        <TextView
+            android:id="@+id/promoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/promo_code"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.Subtitle"
+            android:textStyle="bold" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/promoInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:hint="@string/promo_hint"
+            app:boxBackgroundColor="@color/app_surface"
+            app:boxStrokeColor="@color/app_divider"
+            app:boxStrokeWidth="1dp"
+            app:boxStrokeWidthFocused="1dp"
+            app:errorEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/promoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:id="@+id/promoButtonsRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/applyPromoButton"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="@string/apply"
+                android:textAllCaps="false"
+                android:textColor="@color/app_primary"
+                app:strokeColor="@color/app_primary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/removePromoButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="@dimen/space_sm"
+                android:text="@string/remove"
+                android:textAllCaps="false"
+                android:textColor="@color/app_error" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/promoAppliedHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_xs"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+            android:textColor="@color/app_secondary"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/space_md"
+            android:layout_marginBottom="@dimen/space_md"
+            android:background="@color/app_divider" />
+
+        <!-- Breakdown section -->
+        <TextView
+            android:id="@+id/breakdownTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/breakdown"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.Subtitle"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
             android:orientation="horizontal">
 
             <TextView
@@ -81,6 +167,30 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/discountRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/discountLabel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/discount"
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+
+            <TextView
+                android:id="@+id/discountValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+                android:textColor="@color/app_error" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
@@ -95,6 +205,26 @@
 
             <TextView
                 android:id="@+id/deliveryValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_sm"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/service_fee"
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+
+            <TextView
+                android:id="@+id/serviceFeeValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />

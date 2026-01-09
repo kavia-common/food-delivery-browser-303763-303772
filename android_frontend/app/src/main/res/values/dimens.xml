@@ -4,6 +4,7 @@
     <dimen name="space_md">12dp</dimen>
     <dimen name="space_lg">16dp</dimen>
     <dimen name="space_xl">24dp</dimen>
+    <dimen name="space_xxl">32dp</dimen>
 
     <dimen name="card_radius">16dp</dimen>
     <dimen name="banner_height">88dp</dimen>
