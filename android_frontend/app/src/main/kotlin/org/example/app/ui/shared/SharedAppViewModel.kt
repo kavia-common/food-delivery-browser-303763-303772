@@ -10,4 +10,8 @@ class SharedAppViewModel : ViewModel() {
     val favoriteMenuItemIds: LiveData<Set<String>> = FavoritesRepository.favoriteMenuItemIdsLive
 
     val homeFavoritesOnly: LiveData<Boolean> = AppPreferencesRepository.homeFavoritesOnly
+    val homeSearchQuery: LiveData<String> = AppPreferencesRepository.homeSearchQuery
+    val homeVegOnly: LiveData<Boolean> = AppPreferencesRepository.homeVegOnly
+    val homeSelectedCuisines: LiveData<Set<String>> = AppPreferencesRepository.homeSelectedCuisines
+    val homeSortOption: LiveData<AppPreferencesRepository.HomeSortOption> = AppPreferencesRepository.homeSortOption
 }

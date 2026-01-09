@@ -24,6 +24,17 @@
     <string name="favorite">Favorite</string>
     <string name="favorites_only">Favorites only</string>
 
+    <string name="search_restaurants">Search restaurants or cuisines</string>
+
+    <string name="filters_veg_only">Veg-only</string>
+
+    <string name="sort">Sort</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_rating_desc">Rating (high to low)</string>
+    <string name="sort_price_asc">Price (low to high)</string>
+    <string name="sort_eta_asc">ETA (fastest)</string>
+    <string name="sort_popularity_desc">Popularity</string>
+
     <string name="empty_cart_title">Your cart is empty</string>
     <string name="empty_cart_subtitle">Add items from a restaurant menu.</string>
 </resources>

@@ -1,17 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/space_lg"
     android:background="@color/app_background">
 
-    <TextView
-        android:id="@+id/homeTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/restaurants_title"
-        android:textAppearance="@style/TextAppearance.FoodDelivery.Title" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/homeTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/restaurants_title"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.Title" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/sortButton"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:minHeight="40dp"
+            android:text="@string/sort"
+            android:textAllCaps="false"
+            android:textColor="@color/app_primary"
+            app:strokeColor="@color/app_primary"
+            app:icon="@drawable/ic_sort"
+            app:iconPadding="@dimen/space_xs"
+            app:iconTint="@color/app_primary" />
+    </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchInputLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:hint="@string/search_restaurants"
+        app:boxBackgroundColor="@color/app_surface"
+        app:boxStrokeColor="@color/app_divider"
+        app:boxStrokeWidth="1dp"
+        app:boxStrokeWidthFocused="1dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/favoritesOnlySwitch"
@@ -20,6 +64,15 @@
         android:layout_marginTop="@dimen/space_sm"
         android:text="@string/favorites_only"
         android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/filterChipGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_sm"
+        app:singleSelection="false"
+        app:selectionRequired="false"
+        app:chipSpacing="@dimen/space_sm" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/restaurantRecyclerView"
