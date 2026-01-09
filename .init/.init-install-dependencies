@@ -1,0 +1,4 @@
+{
+    "command": "./gradlew dependencies",
+    "working_directory": "/home/kavia/workspace/code-generation/food-delivery-browser-303763-303772/android_frontend"
+}
