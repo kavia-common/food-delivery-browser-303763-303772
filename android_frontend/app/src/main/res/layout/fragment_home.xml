@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/space_lg"
-    android:background="@color/app_background">
+    android:background="?android:attr/colorBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,11 +29,8 @@
             android:minHeight="40dp"
             android:text="@string/sort"
             android:textAllCaps="false"
-            android:textColor="@color/app_primary"
-            app:strokeColor="@color/app_primary"
             app:icon="@drawable/ic_sort"
-            app:iconPadding="@dimen/space_xs"
-            app:iconTint="@color/app_primary" />
+            app:iconPadding="@dimen/space_xs" />
     </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -43,8 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_md"
         android:hint="@string/search_restaurants"
-        app:boxBackgroundColor="@color/app_surface"
-        app:boxStrokeColor="@color/app_divider"
+        app:boxBackgroundColor="?attr/colorSurface"
         app:boxStrokeWidth="1dp"
         app:boxStrokeWidthFocused="1dp">
 

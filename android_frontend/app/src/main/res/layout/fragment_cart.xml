@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/space_lg"
-    android:background="@color/app_background">
+    android:background="?android:attr/colorBackground">
 
     <TextView
         android:id="@+id/cartTitle"
@@ -27,7 +27,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:src="@drawable/ic_cart"
-            app:tint="@color/app_secondary" />
+            app:tint="?attr/colorOnSurfaceVariant" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/space_md"
         android:orientation="vertical"
-        android:background="@color/app_surface"
+        android:background="?attr/colorSurface"
         android:padding="@dimen/space_md">
 
         <!-- Promo section -->
@@ -77,8 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_sm"
             android:hint="@string/promo_hint"
-            app:boxBackgroundColor="@color/app_surface"
-            app:boxStrokeColor="@color/app_divider"
+            app:boxBackgroundColor="?attr/colorSurface"
             app:boxStrokeWidth="1dp"
             app:boxStrokeWidthFocused="1dp"
             app:errorEnabled="true">
@@ -106,9 +105,7 @@
                 android:layout_height="40dp"
                 android:layout_weight="1"
                 android:text="@string/apply"
-                android:textAllCaps="false"
-                android:textColor="@color/app_primary"
-                app:strokeColor="@color/app_primary" />
+                android:textAllCaps="false" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/removePromoButton"
@@ -118,7 +115,7 @@
                 android:layout_marginStart="@dimen/space_sm"
                 android:text="@string/remove"
                 android:textAllCaps="false"
-                android:textColor="@color/app_error" />
+                android:textColor="?attr/colorError" />
         </LinearLayout>
 
         <TextView
@@ -127,7 +124,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_xs"
             android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
-            android:textColor="@color/app_secondary"
+            android:textColor="?attr/colorOnSurfaceVariant"
             android:visibility="gone" />
 
         <View

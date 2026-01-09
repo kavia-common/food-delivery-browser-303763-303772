@@ -8,7 +8,7 @@
     app:cardElevation="0dp"
     app:strokeColor="@color/app_divider"
     app:strokeWidth="1dp"
-    android:backgroundTint="@color/app_surface">
+    android:backgroundTint="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -61,16 +61,14 @@
             android:layout_marginEnd="@dimen/space_sm"
             android:src="@drawable/ic_heart_outline"
             android:contentDescription="@string/favorite"
-            app:tint="@color/app_error" />
+            app:tint="?attr/colorError" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/addButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="@string/add"
-            app:strokeColor="@color/app_primary"
-            android:textColor="@color/app_primary" />
+            android:text="@string/add" />
 
         <LinearLayout
             android:id="@+id/qtyContainer"
@@ -86,8 +84,6 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="@string/minus"
-                android:textColor="@color/app_primary"
-                app:strokeColor="@color/app_primary"
                 app:cornerRadius="12dp" />
 
             <TextView
@@ -104,8 +100,6 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:text="@string/plus"
-                android:textColor="@color/app_primary"
-                app:strokeColor="@color/app_primary"
                 app:cornerRadius="12dp" />
         </LinearLayout>
 

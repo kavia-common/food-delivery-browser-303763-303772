@@ -8,7 +8,7 @@
     app:cardElevation="0dp"
     app:strokeColor="@color/app_divider"
     app:strokeWidth="1dp"
-    android:backgroundTint="@color/app_surface">
+    android:backgroundTint="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,8 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.FoodDelivery.Subtitle"
-                android:textStyle="bold"
-                android:textColor="@color/app_text" />
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/restaurantTags"
@@ -54,8 +53,7 @@
                     android:id="@+id/restaurantRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
-                    android:textColor="@color/app_text" />
+                    android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -87,7 +85,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_chevron_right"
-            app:tint="@color/app_secondary" />
+            app:tint="?attr/colorControlNormal" />
 
     </LinearLayout>
 

@@ -26,6 +26,23 @@ object AppPreferencesRepository {
     private const val KEY_HOME_SELECTED_CUISINES = "home_selected_cuisines" // encoded as pipe-delimited string
     private const val KEY_HOME_SORT = "home_sort"
 
+    private const val KEY_THEME_MODE = "theme_mode"
+
+    /**
+     * App-level theme mode setting (Light / Dark / Follow system).
+     */
+    enum class ThemeMode(val id: String) {
+        SYSTEM("system"),
+        LIGHT("light"),
+        DARK("dark");
+
+        companion object {
+            fun fromId(id: String?): ThemeMode {
+                return entries.firstOrNull { it.id == id } ?: SYSTEM
+            }
+        }
+    }
+
     enum class HomeSortOption(val id: String) {
         RATING_DESC("rating_desc"),
         PRICE_ASC("price_asc"),
@@ -38,6 +55,9 @@ object AppPreferencesRepository {
             }
         }
     }
+
+    private val _themeMode = MutableLiveData(ThemeMode.SYSTEM)
+    val themeMode: LiveData<ThemeMode> = _themeMode
 
     private val _homeFavoritesOnly = MutableLiveData(false)
     val homeFavoritesOnly: LiveData<Boolean> = _homeFavoritesOnly
@@ -59,6 +79,8 @@ object AppPreferencesRepository {
         /** Initialize repository with SharedPreferences and load persisted values. */
         if (storage == null) storage = PreferencesStorage.from(context)
 
+        _themeMode.value = ThemeMode.fromId(storage?.loadPreferenceString(KEY_THEME_MODE))
+
         _homeFavoritesOnly.value = storage?.loadPreferenceString(KEY_HOME_FAVORITES_ONLY)?.toBooleanStrictOrNull() ?: false
         _homeSearchQuery.value = storage?.loadPreferenceString(KEY_HOME_SEARCH_QUERY).orEmpty()
         _homeVegOnly.value = storage?.loadPreferenceString(KEY_HOME_VEG_ONLY)?.toBooleanStrictOrNull() ?: false
@@ -68,6 +90,13 @@ object AppPreferencesRepository {
 
         val sortId = storage?.loadPreferenceString(KEY_HOME_SORT)
         _homeSortOption.value = HomeSortOption.fromId(sortId)
+    }
+
+    // PUBLIC_INTERFACE
+    fun setThemeMode(mode: ThemeMode) {
+        /** Persist and publish global theme mode. */
+        _themeMode.value = mode
+        storage?.savePreferenceString(KEY_THEME_MODE, mode.id)
     }
 
     // PUBLIC_INTERFACE

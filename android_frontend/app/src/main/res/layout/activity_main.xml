@@ -4,7 +4,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_background">
+    android:background="?android:attr/colorBackground">
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
@@ -19,7 +19,7 @@
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/app_surface"
+        android:background="?attr/colorSurface"
         app:itemIconTint="@color/bottom_nav_item_tint"
         app:itemTextColor="@color/bottom_nav_item_tint"
         app:labelVisibilityMode="labeled"

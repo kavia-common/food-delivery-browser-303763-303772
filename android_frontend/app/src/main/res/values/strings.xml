@@ -52,4 +52,9 @@
 
     <string name="empty_cart_title">Your cart is empty</string>
     <string name="empty_cart_subtitle">Add items from a restaurant menu.</string>
+
+    <string name="theme">Theme</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
 </resources>

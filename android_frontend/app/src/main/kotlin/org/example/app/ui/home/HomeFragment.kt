@@ -5,6 +5,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CompoundButton
@@ -54,6 +57,24 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedAppViewModel = ViewModelProvider(requireActivity())[SharedAppViewModel::class.java]
+        setHasOptionsMenu(true)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.home_overflow_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_theme -> {
+                showThemeDialog()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onCreateView(
@@ -195,6 +216,32 @@ class HomeFragment : Fragment() {
             .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
                 val picked = options.getOrNull(which) ?: return@setSingleChoiceItems
                 AppPreferencesRepository.setHomeSortOption(picked)
+                dialog.dismiss()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun showThemeDialog() {
+        val options = listOf(
+            AppPreferencesRepository.ThemeMode.SYSTEM,
+            AppPreferencesRepository.ThemeMode.LIGHT,
+            AppPreferencesRepository.ThemeMode.DARK
+        )
+        val labels = arrayOf(
+            getString(R.string.theme_system),
+            getString(R.string.theme_light),
+            getString(R.string.theme_dark)
+        )
+
+        val current = sharedAppViewModel.themeMode.value ?: AppPreferencesRepository.ThemeMode.SYSTEM
+        val checkedIndex = options.indexOf(current).coerceAtLeast(0)
+
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle(getString(R.string.theme))
+            .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
+                val picked = options.getOrNull(which) ?: return@setSingleChoiceItems
+                AppPreferencesRepository.setThemeMode(picked)
                 dialog.dismiss()
             }
             .setNegativeButton(android.R.string.cancel, null)

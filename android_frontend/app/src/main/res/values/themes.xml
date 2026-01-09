@@ -1,16 +1,36 @@
 <resources>
-    <style name="Theme.FoodDelivery" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <!--
+      Theme notes:
+      - Still using MaterialComponents (not Compose). We provide a light base and a night override
+        via values-night to support dark mode.
+      - Layouts should reference theme attributes (e.g. ?attr/colorSurface) instead of raw @color.
+     -->
+    <style name="Theme.FoodDelivery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Brand accents -->
         <item name="colorPrimary">@color/app_primary</item>
         <item name="colorPrimaryVariant">@color/app_primary</item>
         <item name="colorSecondary">@color/app_success</item>
         <item name="colorSecondaryVariant">@color/app_success</item>
 
+        <!-- Semantic surfaces -->
         <item name="android:colorBackground">@color/app_background</item>
         <item name="colorSurface">@color/app_surface</item>
         <item name="colorOnSurface">@color/app_text</item>
-        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorOnPrimary">@color/app_on_primary</item>
 
         <item name="colorError">@color/app_error</item>
+        <item name="colorOnError">@color/app_on_error</item>
+
+        <!-- Default controls -->
+        <item name="colorControlNormal">?attr/colorOnSurface</item>
+        <item name="colorControlActivated">?attr/colorPrimary</item>
+
+        <!-- App bar / toolbar -->
+        <item name="colorPrimarySurface">?attr/colorSurface</item>
+
+        <!-- Material ripple / pressed visibility -->
+        <item name="colorOnSurfaceVariant">@color/app_text_muted</item>
+        <item name="colorSurfaceVariant">@color/app_surface_variant</item>
 
         <item name="textAppearanceBody1">@style/TextAppearance.FoodDelivery.Body</item>
         <item name="textAppearanceBody2">@style/TextAppearance.FoodDelivery.BodySmall</item>
@@ -19,18 +39,18 @@
     </style>
 
     <style name="TextAppearance.FoodDelivery.Title" parent="TextAppearance.MaterialComponents.Headline6">
-        <item name="android:textColor">@color/app_text</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="TextAppearance.FoodDelivery.Subtitle" parent="TextAppearance.MaterialComponents.Subtitle1">
-        <item name="android:textColor">@color/app_text</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="TextAppearance.FoodDelivery.Body" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">@color/app_text</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="TextAppearance.FoodDelivery.BodySmall" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">@color/app_text_muted</item>
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
     </style>
 </resources>

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="@dimen/space_lg"
-    android:background="@color/app_background">
+    android:background="?android:attr/colorBackground">
 
     <TextView
         android:id="@+id/menuRestaurantTitle"
