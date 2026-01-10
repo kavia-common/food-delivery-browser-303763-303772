@@ -85,6 +85,30 @@
         app:selectionRequired="false"
         app:chipSpacing="@dimen/space_sm" />
 
+    <LinearLayout
+        android:id="@+id/recommendedSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/recommendedTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/recommended_for_you"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.Subtitle"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recommendedRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="116dp"
+            android:layout_marginTop="@dimen/space_sm"
+            android:overScrollMode="never" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/restaurantRecyclerView"
         android:layout_width="match_parent"

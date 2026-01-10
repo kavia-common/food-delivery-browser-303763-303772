@@ -18,6 +18,20 @@ import org.example.app.data.storage.models.StoredCartLine
  * NOTE: This is not a general-purpose serializer, just a lightweight stable format.
  */
 internal object SafeCodec {
+    // PUBLIC_INTERFACE
+    fun encodeStringList(values: List<String>): String {
+        /** Encode a list of strings for persistence. */
+        return values.joinToString(separator = "|") { it.replace("|", "%7C") }
+    }
+
+    // PUBLIC_INTERFACE
+    fun decodeStringList(encoded: String?): List<String> {
+        /** Decode a list of strings; returns empty list if missing/malformed. */
+        if (encoded.isNullOrBlank()) return emptyList()
+        return encoded.split("|")
+            .map { it.replace("%7C", "|").trim() }
+            .filter { it.isNotBlank() }
+    }
 
     private const val FIELD_SEP = '|'
     private const val LINE_SEP = '\n'

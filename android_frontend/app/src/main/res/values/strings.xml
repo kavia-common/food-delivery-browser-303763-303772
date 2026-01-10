@@ -139,4 +139,9 @@
     <!-- Image content descriptions -->
     <string name="restaurant_image">Restaurant image</string>
     <string name="menu_item_image">Menu item image</string>
+    <string name="recommended_for_you">Recommended for you</string>
+    <string name="you_might_also_like">You might also like</string>
+
+    <string name="cd_recommended_restaurant">Recommended restaurant: %1$s</string>
+    <string name="cd_recommended_menu_item">Recommended item: %1$s</string>
 </resources>

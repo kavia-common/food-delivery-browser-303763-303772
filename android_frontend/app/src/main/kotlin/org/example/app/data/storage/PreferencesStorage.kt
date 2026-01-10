@@ -144,6 +144,30 @@ class PreferencesStorage private constructor(
         putString(KEY_RATINGS_AGGREGATES_V1, encoded)
     }
 
+    // PUBLIC_INTERFACE
+    fun loadRecentlyViewedRestaurantIds(): List<String> {
+        /** Load recently viewed restaurant IDs (most-recent first). Defaults to empty on missing/malformed state. */
+        return SafeCodec.decodeStringList(getString(KEY_RECENT_RESTAURANTS_V1))
+    }
+
+    // PUBLIC_INTERFACE
+    fun saveRecentlyViewedRestaurantIds(ids: List<String>) {
+        /** Persist recently viewed restaurant IDs (most-recent first). */
+        putString(KEY_RECENT_RESTAURANTS_V1, SafeCodec.encodeStringList(ids))
+    }
+
+    // PUBLIC_INTERFACE
+    fun loadRecentlyViewedMenuItemIds(): List<String> {
+        /** Load recently viewed menu item IDs (most-recent first). Defaults to empty on missing/malformed state. */
+        return SafeCodec.decodeStringList(getString(KEY_RECENT_MENU_ITEMS_V1))
+    }
+
+    // PUBLIC_INTERFACE
+    fun saveRecentlyViewedMenuItemIds(ids: List<String>) {
+        /** Persist recently viewed menu item IDs (most-recent first). */
+        putString(KEY_RECENT_MENU_ITEMS_V1, SafeCodec.encodeStringList(ids))
+    }
+
     companion object {
         private const val PREFS_NAME = "food_delivery_prefs"
 
@@ -162,6 +186,10 @@ class PreferencesStorage private constructor(
         // Ratings & reviews persistence (local-only).
         private const val KEY_RATINGS_REVIEWS_V1 = "ratings_reviews_v1"
         private const val KEY_RATINGS_AGGREGATES_V1 = "ratings_aggregates_v1"
+
+        // Recently viewed persistence.
+        private const val KEY_RECENT_RESTAURANTS_V1 = "recent_restaurants_v1"
+        private const val KEY_RECENT_MENU_ITEMS_V1 = "recent_menu_items_v1"
 
         private const val PREF_PREFIX = "pref_"
 

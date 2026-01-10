@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
@@ -23,9 +24,11 @@ import org.example.app.data.models.MenuItem
 import org.example.app.data.ratings.RatingsRepository
 import org.example.app.data.ratings.ReviewTarget
 import org.example.app.data.ratings.ReviewTargetType
+import org.example.app.data.recent.RecentlyViewedRepository
 import org.example.app.ui.common.MotionUtils
 import org.example.app.ui.ratings.ReviewEditorDialogFragment
 import org.example.app.ui.ratings.ReviewsAdapter
+import org.example.app.ui.shared.SharedAppViewModel
 
 class MenuFragment : Fragment() {
 
@@ -35,12 +38,18 @@ class MenuFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MenuItemAdapter
 
+    private lateinit var menuRecommendationsSection: View
+    private lateinit var menuRecommendationsRecyclerView: RecyclerView
+    private lateinit var menuRecommendationsAdapter: RecommendedMenuItemAdapter
+
     // Ratings section
     private lateinit var addReviewButton: MaterialButton
     private lateinit var ratingsSummary: TextView
     private lateinit var noReviewsHint: TextView
     private lateinit var reviewsRecyclerView: RecyclerView
     private lateinit var reviewsAdapter: ReviewsAdapter
+
+    private lateinit var sharedAppViewModel: SharedAppViewModel
 
     private var restaurantId: String = ""
 
@@ -49,11 +58,19 @@ class MenuFragment : Fragment() {
         restaurantId = requireArguments().getString(ARG_RESTAURANT_ID).orEmpty()
 
         adapter = MenuItemAdapter(
-            onItemClick = { item -> openOptionsAndAdd(item) },
-            onAdd = { item -> openOptionsAndAdd(item) },
+            onItemClick = { item ->
+                // Treat opening options as "viewing" the item.
+                RecentlyViewedRepository.recordMenuItemView(item.id)
+                openOptionsAndAdd(item)
+            },
+            onAdd = { item ->
+                RecentlyViewedRepository.recordMenuItemView(item.id)
+                openOptionsAndAdd(item)
+            },
             onInc = { item ->
                 // If item has options, increasing should go through the picker to avoid ambiguity.
                 if (item.variantGroups.isNotEmpty() || item.addOnGroups.isNotEmpty()) {
+                    RecentlyViewedRepository.recordMenuItemView(item.id)
                     openOptionsAndAdd(item)
                 } else {
                     CartRepository.add(item)
@@ -84,10 +101,28 @@ class MenuFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        // Record restaurant as viewed as soon as this screen is created.
+        RecentlyViewedRepository.recordRestaurantView(restaurantId)
+
+        sharedAppViewModel = ViewModelProvider(requireActivity())[SharedAppViewModel::class.java]
+
         title = view.findViewById(R.id.menuRestaurantTitle)
         meta = view.findViewById(R.id.menuRestaurantMeta)
         chipGroup = view.findViewById(R.id.categoryChipGroup)
         recyclerView = view.findViewById(R.id.menuRecyclerView)
+
+        menuRecommendationsSection = view.findViewById(R.id.menuRecommendationsSection)
+        menuRecommendationsRecyclerView = view.findViewById(R.id.menuRecommendationsRecyclerView)
+        menuRecommendationsAdapter = RecommendedMenuItemAdapter { item ->
+            // Clicking recommendation behaves like normal item tap.
+            RecentlyViewedRepository.recordMenuItemView(item.id)
+            openOptionsAndAdd(item)
+        }
+
+        menuRecommendationsRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        menuRecommendationsRecyclerView.adapter = menuRecommendationsAdapter
+        menuRecommendationsRecyclerView.itemAnimator = MotionUtils.createSubtleItemAnimator(requireContext())
 
         // Ratings section views live in included layout.
         val ratingsRoot = view.findViewById<View>(R.id.ratingsSection)
@@ -155,6 +190,13 @@ class MenuFragment : Fragment() {
         setupCategoryChips()
 
         adapter.submitList(MockData.menuForRestaurant(restaurantId))
+
+        // "You might also like" section.
+        sharedAppViewModel.recommendedMenuItemsForRestaurant(restaurantId).observe(viewLifecycleOwner) { items ->
+            val list = (items ?: emptyList()).take(10)
+            menuRecommendationsAdapter.submitList(list)
+            menuRecommendationsSection.isVisible = list.isNotEmpty()
+        }
 
         // Refresh quantities when cart changes.
         CartRepository.cartLines.observe(viewLifecycleOwner) {

@@ -24,6 +24,30 @@
         android:id="@+id/ratingsSection"
         layout="@layout/view_ratings_section" />
 
+    <LinearLayout
+        android:id="@+id/menuRecommendationsSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/space_md"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/menuRecommendationsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/you_might_also_like"
+            android:textAppearance="@style/TextAppearance.FoodDelivery.Subtitle"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/menuRecommendationsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="92dp"
+            android:layout_marginTop="@dimen/space_sm"
+            android:overScrollMode="never" />
+    </LinearLayout>
+
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/categoryChipGroup"
         android:layout_width="match_parent"

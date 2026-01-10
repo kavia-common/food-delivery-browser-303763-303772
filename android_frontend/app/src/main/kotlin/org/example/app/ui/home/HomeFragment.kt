@@ -48,6 +48,10 @@ class HomeFragment : Fragment() {
 
     private lateinit var sharedAppViewModel: SharedAppViewModel
 
+    private lateinit var recommendedSection: View
+    private lateinit var recommendedRecyclerView: RecyclerView
+    private lateinit var recommendedAdapter: RecommendedRestaurantAdapter
+
     private val allRestaurants: List<Restaurant> = MockData.restaurants
 
     override fun onAttach(context: Context) {
@@ -56,6 +60,10 @@ class HomeFragment : Fragment() {
             onClick = { restaurant -> (activity as? MainActivity)?.openMenu(restaurant.id) },
             isFavorited = { id -> FavoritesRepository.isRestaurantFavorited(id) },
             onToggleFavorite = { id -> FavoritesRepository.toggleRestaurantFavorite(id) }
+        )
+
+        recommendedAdapter = RecommendedRestaurantAdapter(
+            onClick = { restaurant -> (activity as? MainActivity)?.openMenu(restaurant.id) }
         )
     }
 
@@ -99,6 +107,14 @@ class HomeFragment : Fragment() {
         sortButton = view.findViewById(R.id.sortButton)
         deliveryEtaBadge = view.findViewById(R.id.homeDeliveryEtaBadge)
 
+        recommendedSection = view.findViewById(R.id.recommendedSection)
+        recommendedRecyclerView = view.findViewById(R.id.recommendedRecyclerView)
+
+        recommendedRecyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recommendedRecyclerView.adapter = recommendedAdapter
+        recommendedRecyclerView.itemAnimator = MotionUtils.createSubtleItemAnimator(requireContext())
+
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
         recyclerView.itemAnimator = MotionUtils.createSubtleItemAnimator(requireContext())
@@ -131,6 +147,13 @@ class HomeFragment : Fragment() {
 
             // Keep sort button text in sync with selection.
             sortButton.text = getSortLabel(sort)
+        }
+
+        // Recommendations carousel (independent of filters/sort on the main list).
+        sharedAppViewModel.recommendedRestaurants.observe(viewLifecycleOwner) { recs ->
+            val list = (recs ?: emptyList()).take(10)
+            recommendedAdapter.submitList(list)
+            recommendedSection.isVisible = list.isNotEmpty()
         }
 
         // Observe changes and re-render.
