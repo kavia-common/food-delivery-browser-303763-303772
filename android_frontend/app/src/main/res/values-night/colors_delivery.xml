@@ -1,0 +1,9 @@
+<resources>
+    <!-- Delivery tracking UI colors (night). -->
+    <color name="delivery_timeline_inactive">#475569</color>
+    <color name="delivery_timeline_active">#93C5FD</color>
+    <color name="delivery_timeline_completed">#06B6D4</color>
+
+    <!-- Progress ring -->
+    <color name="delivery_ring_track">#24324A</color>
+</resources>

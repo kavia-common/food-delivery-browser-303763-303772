@@ -7,25 +7,27 @@
     android:paddingVertical="@dimen/space_sm">
 
     <LinearLayout
-        android:layout_width="32dp"
+        android:layout_width="36dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
+        <!-- Icon gets state-aware tint + subtle animations. -->
         <ImageView
             android:id="@+id/stageIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:contentDescription="@string/delivery_stage_icon"
-            app:tint="?attr/colorPrimary"
+            app:tint="@color/delivery_timeline_inactive"
             android:src="@drawable/ic_timer" />
 
+        <!-- Connector: drawable swapped by adapter based on completed/current/inactive. -->
         <View
             android:id="@+id/verticalLine"
-            android:layout_width="2dp"
-            android:layout_height="28dp"
+            android:layout_width="3dp"
+            android:layout_height="32dp"
             android:layout_marginTop="@dimen/space_xs"
-            android:background="?attr/colorOnSurfaceVariant" />
+            android:background="@drawable/delivery_timeline_connector_inactive" />
     </LinearLayout>
 
     <LinearLayout

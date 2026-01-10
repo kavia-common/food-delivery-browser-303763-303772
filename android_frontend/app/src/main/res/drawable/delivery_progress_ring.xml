@@ -1,0 +1,29 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Track -->
+    <item>
+        <shape
+            android:innerRadiusRatio="3"
+            android:shape="ring"
+            android:thicknessRatio="12"
+            android:useLevel="false">
+            <solid android:color="@color/delivery_ring_track" />
+        </shape>
+    </item>
+
+    <!-- Progress -->
+    <item>
+        <rotate
+            android:fromDegrees="-90"
+            android:pivotX="50%"
+            android:pivotY="50%"
+            android:toDegrees="270">
+            <shape
+                android:innerRadiusRatio="3"
+                android:shape="ring"
+                android:thicknessRatio="12"
+                android:useLevel="true">
+                <solid android:color="@color/delivery_timeline_active" />
+            </shape>
+        </rotate>
+    </item>
+</layer-list>

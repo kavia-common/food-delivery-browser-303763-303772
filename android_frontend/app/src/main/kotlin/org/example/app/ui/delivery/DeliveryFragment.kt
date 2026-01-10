@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
+import org.example.app.ui.common.MotionUtils
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -33,6 +34,8 @@ class DeliveryFragment : Fragment() {
     private lateinit var headerSubtitle: TextView
     private lateinit var headerInstructions: TextView
     private lateinit var headerEta: TextView
+    private lateinit var headerRing: ProgressBar
+    private lateinit var headerRingPercent: TextView
     private lateinit var headerProgress: ProgressBar
     private lateinit var cancelButton: MaterialButton
 
@@ -57,6 +60,8 @@ class DeliveryFragment : Fragment() {
         headerSubtitle = view.findViewById(R.id.deliveryHeaderSubtitle)
         headerInstructions = view.findViewById(R.id.deliveryOrderInstructions)
         headerEta = view.findViewById(R.id.deliveryHeaderEta)
+        headerRing = view.findViewById(R.id.deliveryHeaderRing)
+        headerRingPercent = view.findViewById(R.id.deliveryHeaderRingPercent)
         headerProgress = view.findViewById(R.id.deliveryHeaderProgress)
         cancelButton = view.findViewById(R.id.cancelOrderButton)
 
@@ -96,15 +101,26 @@ class DeliveryFragment : Fragment() {
 
         val stageIndex = order.currentStage.ordinal
         val progressPct = ((stageIndex + 1) * 100 / DeliveryStage.entries.size).coerceIn(0, 100)
+
         headerProgress.progress = progressPct
+        headerRing.progress = progressPct
+        headerRingPercent.text = "$progressPct%"
 
         val isDelivered = order.currentStage == DeliveryStage.DELIVERED
         cancelButton.isVisible = !isDelivered
 
         headerEta.isVisible = !isDelivered
-        headerEta.text = if (isDelivered) "" else {
+        val etaText = if (isDelivered) "" else {
             val seconds = max(0L, (etaRemainingMs ?: 0L) / 1000L)
             getString(R.string.delivery_eta_in, formatCountdown(seconds))
+        }
+        headerEta.text = etaText
+
+        // Accessibility: give the ring a stage + ETA summary.
+        headerRing.contentDescription = if (isDelivered) {
+            "Delivery progress: ${order.currentStage.displayLabel()}, completed."
+        } else {
+            "Delivery progress: ${order.currentStage.displayLabel()}. $etaText."
         }
 
         adapter.submit(buildTimelineRows(order, etaRemainingMs))
