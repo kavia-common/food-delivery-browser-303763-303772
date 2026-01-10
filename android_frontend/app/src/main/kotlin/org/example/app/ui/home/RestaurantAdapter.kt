@@ -70,6 +70,20 @@ class RestaurantAdapter(
             Formatters.ratingText(restaurant.rating)
         }
 
+        // TalkBack: "4.5 stars from 120 reviews" (or "4.5 stars" when count is unknown).
+        holder.rating.contentDescription = if (agg != null && agg.count > 0) {
+            holder.itemView.context.getString(
+                R.string.cd_rating_with_count,
+                Formatters.ratingText(agg.average),
+                agg.count
+            )
+        } else {
+            holder.itemView.context.getString(
+                R.string.cd_rating_no_count,
+                Formatters.ratingText(restaurant.rating)
+            )
+        }
+
         holder.eta.text = Formatters.etaText(restaurant.etaMinutesMin, restaurant.etaMinutesMax)
 
         try {
@@ -80,14 +94,18 @@ class RestaurantAdapter(
 
         val fav = isFavorited(restaurant.id)
         holder.favoriteToggle.setImageResource(if (fav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
-        holder.favoriteToggle.contentDescription = holder.itemView.context.getString(R.string.favorite)
+        holder.favoriteToggle.contentDescription = holder.itemView.context.getString(
+            if (fav) R.string.cd_remove_favorite else R.string.cd_add_favorite
+        )
 
         holder.favoriteToggle.setOnClickListener {
             onToggleFavorite(restaurant.id)
             // Optimistic UI update; fragments also observe repository and may re-submit list.
             val nowFav = isFavorited(restaurant.id)
             holder.favoriteToggle.setImageResource(if (nowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
-            holder.favoriteToggle.contentDescription = holder.itemView.context.getString(R.string.favorite)
+            holder.favoriteToggle.contentDescription = holder.itemView.context.getString(
+                if (nowFav) R.string.cd_remove_favorite else R.string.cd_add_favorite
+            )
         }
 
         holder.itemView.setOnClickListener { onClick(restaurant) }

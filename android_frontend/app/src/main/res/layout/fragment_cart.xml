@@ -27,6 +27,8 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:src="@drawable/ic_cart"
+            android:contentDescription=""
+            android:importantForAccessibility="no"
             app:tint="?attr/colorOnSurfaceVariant" />
 
         <TextView
@@ -102,20 +104,24 @@
                 android:id="@+id/applyPromoButton"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/a11y_min_touch_target"
+                android:minHeight="@dimen/a11y_min_touch_target"
                 android:layout_weight="1"
                 android:text="@string/apply"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:contentDescription="@string/apply_promo" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/removePromoButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/a11y_min_touch_target"
+                android:minHeight="@dimen/a11y_min_touch_target"
                 android:layout_marginStart="@dimen/space_sm"
                 android:text="@string/remove"
                 android:textAllCaps="false"
-                android:textColor="?attr/colorError" />
+                android:textColor="?attr/colorError"
+                android:contentDescription="@string/remove_promo" />
         </LinearLayout>
 
         <TextView
@@ -125,7 +131,8 @@
             android:layout_marginTop="@dimen/space_xs"
             android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:accessibilityLiveRegion="polite" />
 
         <View
             android:layout_width="match_parent"
@@ -198,7 +205,8 @@
                 android:id="@+id/subtotalValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+                android:accessibilityLiveRegion="polite" />
         </LinearLayout>
 
         <LinearLayout
@@ -222,7 +230,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
-                android:textColor="@color/app_error" />
+                android:textColor="?attr/colorError"
+                android:accessibilityLiveRegion="polite" />
         </LinearLayout>
 
         <LinearLayout
@@ -242,7 +251,8 @@
                 android:id="@+id/deliveryValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+                android:accessibilityLiveRegion="polite" />
         </LinearLayout>
 
         <LinearLayout
@@ -262,7 +272,8 @@
                 android:id="@+id/serviceFeeValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+                android:accessibilityLiveRegion="polite" />
         </LinearLayout>
 
         <LinearLayout
@@ -282,7 +293,8 @@
                 android:id="@+id/taxValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
+                android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
+                android:accessibilityLiveRegion="polite" />
         </LinearLayout>
 
         <View
@@ -310,7 +322,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.FoodDelivery.Subtitle"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:accessibilityLiveRegion="polite" />
         </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -337,7 +350,7 @@
             android:layout_marginTop="@dimen/space_sm"
             android:text="@string/checkout_disabled_hint"
             android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall"
-            android:textColor="@color/app_secondary" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
     </LinearLayout>
 

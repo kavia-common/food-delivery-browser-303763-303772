@@ -116,11 +116,17 @@ class DeliveryFragment : Fragment() {
         }
         headerEta.text = etaText
 
-        // Accessibility: give the ring a stage + ETA summary.
+        // Accessibility: stage and step information ("Preparing, step 2 of 5").
+        val stepText = getString(
+            R.string.cd_delivery_stage_step,
+            order.currentStage.displayLabel(),
+            stageIndex + 1,
+            DeliveryStage.entries.size
+        )
         headerRing.contentDescription = if (isDelivered) {
-            "Delivery progress: ${order.currentStage.displayLabel()}, completed."
+            getString(R.string.cd_delivery_progress_complete, stepText)
         } else {
-            "Delivery progress: ${order.currentStage.displayLabel()}. $etaText."
+            getString(R.string.cd_delivery_progress_with_eta, stepText, etaText)
         }
 
         adapter.submit(buildTimelineRows(order, etaRemainingMs))

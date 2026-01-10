@@ -45,7 +45,9 @@
             android:layout_width="match_parent"
             android:layout_height="92dp"
             android:layout_marginTop="@dimen/space_sm"
-            android:overScrollMode="never" />
+            android:overScrollMode="never"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
     </LinearLayout>
 
     <com.google.android.material.chip.ChipGroup

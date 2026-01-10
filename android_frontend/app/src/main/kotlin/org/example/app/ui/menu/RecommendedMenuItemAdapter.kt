@@ -42,7 +42,11 @@ class RecommendedMenuItemAdapter(
         holder.meta.text = Formatters.moneyFromCents(item.priceCents)
 
         holder.itemView.contentDescription =
-            holder.itemView.context.getString(R.string.cd_recommended_menu_item, item.name)
+            holder.itemView.context.getString(
+                R.string.cd_recommended_menu_item_full,
+                item.name,
+                Formatters.moneyFromCents(item.priceCents)
+            )
 
         holder.itemView.setOnClickListener { onClick(item) }
     }

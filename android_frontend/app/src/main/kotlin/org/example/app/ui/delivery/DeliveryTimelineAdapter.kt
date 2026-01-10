@@ -85,14 +85,24 @@ class DeliveryTimelineAdapter : RecyclerView.Adapter<DeliveryTimelineAdapter.VH>
                 line.alpha = if (row.isCompleted || row.isCurrent) 1.0f else 0.8f
             }
 
-            // Accessibility: stage status with timestamp (or pending).
+            // Accessibility: stage status with timestamp (or pending) + step position.
             val statusText = when {
-                row.isCompleted -> "completed"
-                row.isCurrent -> "in progress"
-                else -> "pending"
+                row.isCompleted -> context.getString(R.string.delivery_status_completed)
+                row.isCurrent -> context.getString(R.string.delivery_status_in_progress)
+                else -> context.getString(R.string.delivery_status_pending)
             }
             val etaSuffix = row.etaText?.takeIf { it.isNotBlank() }?.let { ", $it" } ?: ""
-            itemView.contentDescription = "${row.stage.displayLabel()}, $statusText at ${row.timeText}$etaSuffix"
+            val step = adapterPosition + 1
+            val totalSteps = (bindingAdapter as? DeliveryTimelineAdapter)?.itemCount ?: 0
+            itemView.contentDescription = context.getString(
+                R.string.cd_delivery_timeline_row,
+                row.stage.displayLabel(),
+                step,
+                totalSteps,
+                statusText,
+                row.timeText,
+                etaSuffix
+            )
 
             // Micro-animations when a stage becomes completed/current (once per row/stage).
             animateStageAdvanceIfNeeded(row)

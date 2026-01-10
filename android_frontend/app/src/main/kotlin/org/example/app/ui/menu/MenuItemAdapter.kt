@@ -84,7 +84,11 @@ class MenuItemAdapter(
             holder.ratingMeta.isVisible = true
             holder.ratingMeta.text = "${Formatters.ratingText(agg.average)} ★ (${agg.count})"
             holder.ratingMeta.contentDescription =
-                holder.itemView.context.getString(R.string.based_on_reviews, agg.count)
+                holder.itemView.context.getString(
+                    R.string.cd_rating_with_count,
+                    Formatters.ratingText(agg.average),
+                    agg.count
+                )
             holder.ratingMeta.setOnClickListener { onOpenReviews(item) }
         } else {
             holder.ratingMeta.isVisible = false
@@ -93,12 +97,16 @@ class MenuItemAdapter(
 
         val fav = isFavorited(item.id)
         holder.favoriteToggle.setImageResource(if (fav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
-        holder.favoriteToggle.contentDescription = holder.itemView.context.getString(R.string.favorite)
+        holder.favoriteToggle.contentDescription = holder.itemView.context.getString(
+            if (fav) R.string.cd_remove_favorite else R.string.cd_add_favorite
+        )
         holder.favoriteToggle.setOnClickListener {
             onToggleFavorite(item.id)
             val nowFav = isFavorited(item.id)
             holder.favoriteToggle.setImageResource(if (nowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
-            holder.favoriteToggle.contentDescription = holder.itemView.context.getString(R.string.favorite)
+            holder.favoriteToggle.contentDescription = holder.itemView.context.getString(
+                if (nowFav) R.string.cd_remove_favorite else R.string.cd_add_favorite
+            )
         }
 
         val q = getQuantity(item.id) // total across configurations
@@ -111,6 +119,11 @@ class MenuItemAdapter(
             MotionUtils.performHapticClick(holder.addButton)
             onAdd(item)
         }
+        holder.plusButton.contentDescription =
+            holder.itemView.context.getString(R.string.cd_increase_quantity_for_item, item.name)
+        holder.minusButton.contentDescription =
+            holder.itemView.context.getString(R.string.cd_decrease_quantity_for_item, item.name)
+
         holder.plusButton.setOnClickListener {
             MotionUtils.animateTapBounce(holder.plusButton)
             MotionUtils.performHapticClick(holder.plusButton)

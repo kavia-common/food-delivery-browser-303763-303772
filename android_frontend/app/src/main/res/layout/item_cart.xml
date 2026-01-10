@@ -74,7 +74,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cartMinusButton"
                 style="@style/Widget.FoodDelivery.Button.IconSmall"
-                android:text="@string/minus" />
+                android:text="@string/minus"
+                android:contentDescription="@string/decrease_quantity" />
 
             <TextView
                 android:id="@+id/cartQtyText"
@@ -87,7 +88,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cartPlusButton"
                 style="@style/Widget.FoodDelivery.Button.IconSmall"
-                android:text="@string/plus" />
+                android:text="@string/plus"
+                android:contentDescription="@string/increase_quantity" />
 
             <View
                 android:layout_width="0dp"
@@ -98,18 +100,24 @@
                 android:id="@+id/cartEditButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/a11y_min_touch_target"
+                android:minHeight="@dimen/a11y_min_touch_target"
                 android:text="@string/edit"
-                android:textAllCaps="false" />
+                android:textAllCaps="false"
+                android:contentDescription="@string/edit"
+                android:tooltipText="@string/edit_options_hint" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cartRemoveButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/a11y_min_touch_target"
+                android:minHeight="@dimen/a11y_min_touch_target"
                 android:layout_marginStart="@dimen/space_sm"
                 android:text="@string/remove"
-                android:textColor="?attr/colorError" />
+                android:textColor="?attr/colorError"
+                android:contentDescription="@string/remove"
+                android:tooltipText="@string/remove_item_hint" />
         </LinearLayout>
 
     </LinearLayout>

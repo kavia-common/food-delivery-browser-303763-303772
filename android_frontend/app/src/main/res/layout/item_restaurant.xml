@@ -83,9 +83,10 @@
 
         <ImageView
             android:id="@+id/favoriteToggle"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/a11y_min_touch_target"
+            android:layout_height="@dimen/a11y_min_touch_target"
             android:layout_marginEnd="@dimen/space_md"
+            android:padding="12dp"
             android:src="@drawable/ic_heart_outline"
             android:contentDescription="@string/favorite"
             app:tint="@color/app_error" />
@@ -94,6 +95,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_chevron_right"
+            android:contentDescription=""
+            android:importantForAccessibility="no"
             app:tint="?attr/colorControlNormal" />
 
     </LinearLayout>

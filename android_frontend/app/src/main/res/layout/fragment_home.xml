@@ -40,10 +40,11 @@
             android:id="@+id/sortButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:minHeight="40dp"
+            android:layout_height="@dimen/a11y_min_touch_target"
+            android:minHeight="@dimen/a11y_min_touch_target"
             android:text="@string/sort"
             android:textAllCaps="false"
+            android:contentDescription="@string/sort"
             app:icon="@drawable/ic_sort"
             app:iconPadding="@dimen/space_xs" />
     </LinearLayout>
@@ -106,7 +107,9 @@
             android:layout_width="match_parent"
             android:layout_height="116dp"
             android:layout_marginTop="@dimen/space_sm"
-            android:overScrollMode="never" />
+            android:overScrollMode="never"
+            android:focusable="true"
+            android:focusableInTouchMode="true" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

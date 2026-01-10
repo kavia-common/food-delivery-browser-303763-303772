@@ -51,17 +51,21 @@
                 android:id="@+id/editReviewButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/a11y_min_touch_target"
+                android:minHeight="@dimen/a11y_min_touch_target"
                 android:text="@string/edit"
-                android:contentDescription="@string/edit" />
+                android:contentDescription="@string/edit"
+                android:tooltipText="@string/edit_review_hint" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/deleteReviewButton"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
+                android:layout_height="@dimen/a11y_min_touch_target"
+                android:minHeight="@dimen/a11y_min_touch_target"
                 android:text="@string/delete"
-                android:contentDescription="@string/delete" />
+                android:contentDescription="@string/delete"
+                android:tooltipText="@string/delete_review_hint" />
         </LinearLayout>
 
     </LinearLayout>

@@ -74,6 +74,16 @@ class CartAdapter(
         holder.qty.text = line.quantity.toString()
         holder.lineTotal.text = Formatters.moneyFromCents(unitPrice * line.quantity)
 
+        // TalkBack labels for row actions.
+        holder.plus.contentDescription =
+            holder.itemView.context.getString(R.string.cd_increase_quantity_for_item, line.item.name)
+        holder.minus.contentDescription =
+            holder.itemView.context.getString(R.string.cd_decrease_quantity_for_item, line.item.name)
+        holder.edit.contentDescription =
+            holder.itemView.context.getString(R.string.cd_edit_item, line.item.name)
+        holder.remove.contentDescription =
+            holder.itemView.context.getString(R.string.cd_remove_item, line.item.name)
+
         holder.plus.setOnClickListener {
             MotionUtils.animateTapBounce(holder.plus)
             MotionUtils.performHapticClick(holder.plus)

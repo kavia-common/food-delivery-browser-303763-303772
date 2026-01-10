@@ -42,7 +42,13 @@ class RecommendedRestaurantAdapter(
         holder.meta.text = "${Formatters.ratingText(r.rating)} • ${Formatters.etaText(r.etaMinutesMin, r.etaMinutesMax)}"
 
         holder.itemView.contentDescription =
-            holder.itemView.context.getString(R.string.cd_recommended_restaurant, r.name)
+            holder.itemView.context.getString(
+                R.string.cd_recommended_restaurant_full,
+                r.name,
+                r.cuisineTags.joinToString(", "),
+                Formatters.ratingText(r.rating),
+                Formatters.etaText(r.etaMinutesMin, r.etaMinutesMax)
+            )
 
         holder.itemView.setOnClickListener { onClick(r) }
     }

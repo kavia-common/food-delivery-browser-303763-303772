@@ -14,5 +14,8 @@
     <dimen name="button_corner_radius">12dp</dimen>
     <dimen name="icon_button_size">40dp</dimen>
 
+    <!-- Accessibility: minimum touch target size for interactive elements (Material guidance: 48dp). -->
+    <dimen name="a11y_min_touch_target">48dp</dimen>
+
     <dimen name="banner_height">88dp</dimen>
 </resources>

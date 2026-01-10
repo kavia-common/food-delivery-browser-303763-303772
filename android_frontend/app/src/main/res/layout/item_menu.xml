@@ -18,6 +18,8 @@
             android:layout_height="20dp"
             android:layout_marginTop="2dp"
             android:src="@drawable/ic_veg"
+            android:contentDescription=""
+            android:importantForAccessibility="no"
             app:tint="@color/app_success" />
 
         <LinearLayout
@@ -79,9 +81,10 @@
 
         <ImageView
             android:id="@+id/favoriteToggle"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="@dimen/a11y_min_touch_target"
+            android:layout_height="@dimen/a11y_min_touch_target"
             android:layout_marginEnd="@dimen/space_sm"
+            android:padding="12dp"
             android:src="@drawable/ic_heart_outline"
             android:contentDescription="@string/favorite"
             app:tint="?attr/colorError" />
@@ -90,21 +93,26 @@
             android:id="@+id/addButton"
             style="@style/Widget.FoodDelivery.Button.Outlined"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:text="@string/add" />
+            android:layout_height="@dimen/a11y_min_touch_target"
+            android:minHeight="@dimen/a11y_min_touch_target"
+            android:text="@string/add"
+            android:contentDescription="@string/add_to_cart" />
 
         <LinearLayout
             android:id="@+id/qtyContainer"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="@dimen/a11y_min_touch_target"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:focusable="false"
+            android:importantForAccessibility="no">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/minusButton"
                 style="@style/Widget.FoodDelivery.Button.IconSmall"
-                android:text="@string/minus" />
+                android:text="@string/minus"
+                android:contentDescription="@string/decrease_quantity" />
 
             <TextView
                 android:id="@+id/qtyText"
@@ -117,7 +125,8 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/plusButton"
                 style="@style/Widget.FoodDelivery.Button.IconSmall"
-                android:text="@string/plus" />
+                android:text="@string/plus"
+                android:contentDescription="@string/increase_quantity" />
         </LinearLayout>
 
     </LinearLayout>

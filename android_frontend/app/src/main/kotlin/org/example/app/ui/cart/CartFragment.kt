@@ -141,18 +141,26 @@ class CartFragment : Fragment() {
             when (result) {
                 PromoApplyResult.APPLIED -> {
                     promoInputLayout.error = null
+                    promoAppliedHint.isVisible = true
+                    promoAppliedHint.text = getString(R.string.promo_apply_success)
                 }
 
                 PromoApplyResult.CART_EMPTY -> {
                     promoInputLayout.error = getString(R.string.promo_cart_empty)
+                    promoAppliedHint.isVisible = true
+                    promoAppliedHint.text = getString(R.string.promo_apply_failed)
                 }
 
                 PromoApplyResult.INVALID -> {
                     promoInputLayout.error = getString(R.string.promo_invalid)
+                    promoAppliedHint.isVisible = true
+                    promoAppliedHint.text = getString(R.string.promo_apply_failed)
                 }
 
                 PromoApplyResult.INVALID_OR_EXPIRED -> {
                     promoInputLayout.error = getString(R.string.promo_invalid_or_expired)
+                    promoAppliedHint.isVisible = true
+                    promoAppliedHint.text = getString(R.string.promo_apply_failed)
                 }
             }
         }
@@ -269,7 +277,14 @@ class CartFragment : Fragment() {
     }
 
     private fun renderTotals(totals: CartTotals) {
-        subtotalValue.text = Formatters.moneyFromCents(totals.subtotalCents)
+        val subtotalText = Formatters.moneyFromCents(totals.subtotalCents)
+        val deliveryText = Formatters.moneyFromCents(totals.deliveryFeeCents)
+        val serviceFeeText = Formatters.moneyFromCents(totals.serviceFeeCents)
+        val taxText = Formatters.moneyFromCents(totals.taxCents)
+        val totalText = Formatters.moneyFromCents(totals.totalCents)
+
+        subtotalValue.text = subtotalText
+        subtotalValue.contentDescription = getString(R.string.cd_cart_subtotal, subtotalText)
 
         val hasDiscount = totals.discountCents > 0
         discountRow.isVisible = hasDiscount
@@ -281,13 +296,33 @@ class CartFragment : Fragment() {
                 getString(R.string.discount)
             }
             // Show discount as negative.
-            discountValue.text = "-" + Formatters.moneyFromCents(totals.discountCents)
+            val discountText = "-" + Formatters.moneyFromCents(totals.discountCents)
+            discountValue.text = discountText
+            discountValue.contentDescription = getString(R.string.cd_cart_discount, discountText)
         }
 
-        deliveryValue.text = Formatters.moneyFromCents(totals.deliveryFeeCents)
-        serviceFeeValue.text = Formatters.moneyFromCents(totals.serviceFeeCents)
-        taxValue.text = Formatters.moneyFromCents(totals.taxCents)
-        totalValue.text = Formatters.moneyFromCents(totals.totalCents)
+        deliveryValue.text = deliveryText
+        deliveryValue.contentDescription = getString(R.string.cd_cart_delivery_fee, deliveryText)
+
+        serviceFeeValue.text = serviceFeeText
+        serviceFeeValue.contentDescription = getString(R.string.cd_cart_service_fee, serviceFeeText)
+
+        taxValue.text = taxText
+        taxValue.contentDescription = getString(R.string.cd_cart_tax, taxText)
+
+        totalValue.text = totalText
+        totalValue.contentDescription = getString(R.string.cd_cart_total, totalText)
+
+        // A single concise breakdown summary on the container also helps when swiping through quickly.
+        totalsContainer.contentDescription = getString(
+            R.string.cd_cart_totals_breakdown,
+            subtotalText,
+            if (hasDiscount) ("-" + Formatters.moneyFromCents(totals.discountCents)) else getString(R.string.none),
+            deliveryText,
+            serviceFeeText,
+            taxText,
+            totalText
+        )
     }
 
     companion object {

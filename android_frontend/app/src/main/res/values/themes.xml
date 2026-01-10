@@ -79,13 +79,14 @@
 
     <style name="Widget.FoodDelivery.Button.IconSmall" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <!-- Keep visual size compact, but guarantee 48dp tap target. -->
         <item name="android:layout_width">@dimen/icon_button_size</item>
         <item name="android:layout_height">@dimen/icon_button_size</item>
         <item name="android:insetLeft">0dp</item>
         <item name="android:insetRight">0dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
-        <item name="android:minWidth">@dimen/icon_button_size</item>
-        <item name="android:minHeight">@dimen/icon_button_size</item>
+        <item name="android:minWidth">@dimen/a11y_min_touch_target</item>
+        <item name="android:minHeight">@dimen/a11y_min_touch_target</item>
     </style>
 </resources>

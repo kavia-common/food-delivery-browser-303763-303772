@@ -1,0 +1,56 @@
+<resources>
+    <!-- General action labels -->
+    <string name="increase_quantity">Increase quantity</string>
+    <string name="decrease_quantity">Decrease quantity</string>
+    <string name="apply_promo">Apply promo code</string>
+    <string name="remove_promo">Remove promo code</string>
+
+    <!-- Item-specific action labels -->
+    <string name="cd_increase_quantity_for_item">Increase quantity for %1$s</string>
+    <string name="cd_decrease_quantity_for_item">Decrease quantity for %1$s</string>
+    <string name="cd_edit_item">Edit %1$s</string>
+    <string name="cd_remove_item">Remove %1$s</string>
+
+    <!-- Favorites -->
+    <string name="cd_add_favorite">Add to favorites</string>
+    <string name="cd_remove_favorite">Remove from favorites</string>
+
+    <!-- Ratings -->
+    <string name="cd_rating_with_count">%1$s stars from %2$d reviews</string>
+    <string name="cd_rating_no_count">%1$s stars</string>
+
+    <!-- Recommendations -->
+    <string name="cd_recommended_restaurant_full">Recommended: %1$s. Cuisines: %2$s. Rating: %3$s stars. ETA: %4$s.</string>
+    <string name="cd_recommended_menu_item_full">Recommended: %1$s. Price: %2$s.</string>
+
+    <!-- Cart totals breakdown -->
+    <string name="cd_cart_subtotal">Subtotal %1$s</string>
+    <string name="cd_cart_discount">Discount %1$s</string>
+    <string name="cd_cart_delivery_fee">Delivery fee %1$s</string>
+    <string name="cd_cart_service_fee">Service fee %1$s</string>
+    <string name="cd_cart_tax">Tax %1$s</string>
+    <string name="cd_cart_total">Total %1$s</string>
+    <string name="cd_cart_totals_breakdown">Cart totals. Subtotal %1$s. Discount %2$s. Delivery fee %3$s. Service fee %4$s. Tax %5$s. Total %6$s.</string>
+    <string name="none">None</string>
+
+    <!-- Promo announcements -->
+    <string name="promo_apply_success">Promo code applied</string>
+    <string name="promo_apply_failed">Promo code could not be applied</string>
+
+    <!-- Delivery progress -->
+    <string name="delivery_status_completed">completed</string>
+    <string name="delivery_status_in_progress">in progress</string>
+    <string name="delivery_status_pending">pending</string>
+    <string name="cd_delivery_stage_step">%1$s, step %2$d of %3$d</string>
+    <string name="cd_delivery_progress_complete">Delivery progress: %1$s, completed.</string>
+    <string name="cd_delivery_progress_with_eta">Delivery progress: %1$s. %2$s.</string>
+    <string name="cd_delivery_timeline_row">%1$s, step %2$d of %3$d, %4$s at %5$s%6$s</string>
+
+    <!-- Review action hints -->
+    <string name="edit_review_hint">Edit this review</string>
+    <string name="delete_review_hint">Delete this review</string>
+
+    <!-- Cart line hints -->
+    <string name="edit_options_hint">Edit options and note</string>
+    <string name="remove_item_hint">Remove item from cart</string>
+</resources>
