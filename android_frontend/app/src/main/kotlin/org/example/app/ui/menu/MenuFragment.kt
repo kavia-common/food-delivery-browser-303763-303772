@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.button.MaterialButton
 import org.example.app.MainActivity
 import org.example.app.R
 import org.example.app.common.Formatters
@@ -19,7 +20,12 @@ import org.example.app.data.favorites.FavoritesRepository
 import org.example.app.data.mock.MockData
 import org.example.app.data.models.ItemConfiguration
 import org.example.app.data.models.MenuItem
+import org.example.app.data.ratings.RatingsRepository
+import org.example.app.data.ratings.ReviewTarget
+import org.example.app.data.ratings.ReviewTargetType
 import org.example.app.ui.common.MotionUtils
+import org.example.app.ui.ratings.ReviewEditorDialogFragment
+import org.example.app.ui.ratings.ReviewsAdapter
 
 class MenuFragment : Fragment() {
 
@@ -28,6 +34,13 @@ class MenuFragment : Fragment() {
     private lateinit var chipGroup: ChipGroup
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MenuItemAdapter
+
+    // Ratings section
+    private lateinit var addReviewButton: MaterialButton
+    private lateinit var ratingsSummary: TextView
+    private lateinit var noReviewsHint: TextView
+    private lateinit var reviewsRecyclerView: RecyclerView
+    private lateinit var reviewsAdapter: ReviewsAdapter
 
     private var restaurantId: String = ""
 
@@ -57,7 +70,8 @@ class MenuFragment : Fragment() {
             },
             getQuantity = { itemId -> CartRepository.getQuantity(itemId) },
             isFavorited = { itemId -> FavoritesRepository.isMenuItemFavorited(itemId) },
-            onToggleFavorite = { itemId -> FavoritesRepository.toggleMenuItemFavorite(itemId) }
+            onToggleFavorite = { itemId -> FavoritesRepository.toggleMenuItemFavorite(itemId) },
+            onOpenReviews = { item -> openReviewsForMenuItem(item) }
         )
     }
 
@@ -75,12 +89,64 @@ class MenuFragment : Fragment() {
         chipGroup = view.findViewById(R.id.categoryChipGroup)
         recyclerView = view.findViewById(R.id.menuRecyclerView)
 
+        // Ratings section views live in included layout.
+        val ratingsRoot = view.findViewById<View>(R.id.ratingsSection)
+        addReviewButton = ratingsRoot.findViewById(R.id.addReviewButton)
+        ratingsSummary = ratingsRoot.findViewById(R.id.ratingsSummary)
+        noReviewsHint = ratingsRoot.findViewById(R.id.noReviewsHint)
+        reviewsRecyclerView = ratingsRoot.findViewById(R.id.reviewsRecyclerView)
+
+        val restaurantTarget = ReviewTarget(ReviewTargetType.RESTAURANT, restaurantId)
+
+        reviewsAdapter = ReviewsAdapter(
+            onEdit = { review ->
+                ReviewEditorDialogFragment.newEdit(restaurantTarget, review.id)
+                    .show(parentFragmentManager, "ReviewEditorDialogFragment")
+            },
+            onDelete = { review ->
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle(getString(R.string.delete_review_title))
+                    .setMessage(getString(R.string.delete_review_message))
+                    .setPositiveButton(R.string.delete) { _, _ -> RatingsRepository.deleteReview(review.id) }
+                    .setNegativeButton(R.string.cancel, null)
+                    .show()
+            }
+        )
+
+        reviewsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        reviewsRecyclerView.adapter = reviewsAdapter
+        reviewsRecyclerView.itemAnimator = MotionUtils.createSubtleItemAnimator(requireContext())
+
+        addReviewButton.setOnClickListener {
+            ReviewEditorDialogFragment.newAdd(restaurantTarget)
+                .show(parentFragmentManager, "ReviewEditorDialogFragment")
+        }
+
         val restaurant = MockData.restaurantById(restaurantId)
         title.text = restaurant?.name ?: getString(R.string.menu_title)
+
+        // Meta line keeps existing mock rating; ratings section shows user aggregate.
         meta.text = if (restaurant != null) {
             "${Formatters.ratingText(restaurant.rating)} • ${Formatters.etaText(restaurant.etaMinutesMin, restaurant.etaMinutesMax)}"
         } else ""
         meta.isVisible = restaurant != null
+
+        // Observe ratings/reviews for this restaurant.
+        RatingsRepository.getAggregate(restaurantTarget).observe(viewLifecycleOwner) { agg ->
+            ratingsSummary.text = if (agg != null && agg.count > 0) {
+                // "4.6 ★ • Based on 12 reviews"
+                "${Formatters.ratingText(agg.average)} ★ • " +
+                    getString(R.string.based_on_reviews, agg.count)
+            } else {
+                // Show a consistent empty state.
+                getString(R.string.no_reviews_summary)
+            }
+        }
+        RatingsRepository.getReviews(restaurantTarget).observe(viewLifecycleOwner) { reviews ->
+            val latest = (reviews ?: emptyList()).take(3)
+            reviewsAdapter.submitList(latest)
+            noReviewsHint.isVisible = latest.isEmpty()
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
@@ -157,6 +223,15 @@ class MenuFragment : Fragment() {
             }
         )
         sheet.show(parentFragmentManager, "ItemOptionsBottomSheet")
+    }
+
+    private fun openReviewsForMenuItem(item: MenuItem) {
+        val target = ReviewTarget(ReviewTargetType.MENU_ITEM, item.id)
+        ReviewsListDialogFragment.newInstance(
+            title = item.name,
+            targetType = target.type,
+            targetId = target.id
+        ).show(parentFragmentManager, "ReviewsListDialogFragment")
     }
 
     companion object {

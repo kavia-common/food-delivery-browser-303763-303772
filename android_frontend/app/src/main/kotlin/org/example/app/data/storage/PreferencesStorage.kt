@@ -120,6 +120,30 @@ class PreferencesStorage private constructor(
         putString(KEY_DELIVERY_ACTIVE_ORDER, encoded)
     }
 
+    // PUBLIC_INTERFACE
+    fun loadRatingsReviewsEncoded(): String? {
+        /** Load persisted ratings/reviews blob (opaque encoded string managed by RatingsCodec). */
+        return getString(KEY_RATINGS_REVIEWS_V1)
+    }
+
+    // PUBLIC_INTERFACE
+    fun saveRatingsReviewsEncoded(encoded: String?) {
+        /** Persist ratings/reviews blob; null removes. */
+        putString(KEY_RATINGS_REVIEWS_V1, encoded)
+    }
+
+    // PUBLIC_INTERFACE
+    fun loadRatingsAggregatesEncoded(): String? {
+        /** Load persisted ratings aggregates blob (opaque encoded string managed by RatingsCodec). */
+        return getString(KEY_RATINGS_AGGREGATES_V1)
+    }
+
+    // PUBLIC_INTERFACE
+    fun saveRatingsAggregatesEncoded(encoded: String?) {
+        /** Persist ratings aggregates blob; null removes. */
+        putString(KEY_RATINGS_AGGREGATES_V1, encoded)
+    }
+
     companion object {
         private const val PREFS_NAME = "food_delivery_prefs"
 
@@ -134,6 +158,10 @@ class PreferencesStorage private constructor(
 
         // Delivery simulation persistence.
         private const val KEY_DELIVERY_ACTIVE_ORDER = "delivery_active_order_v1"
+
+        // Ratings & reviews persistence (local-only).
+        private const val KEY_RATINGS_REVIEWS_V1 = "ratings_reviews_v1"
+        private const val KEY_RATINGS_AGGREGATES_V1 = "ratings_aggregates_v1"
 
         private const val PREF_PREFIX = "pref_"
 

@@ -114,4 +114,27 @@
     <string name="item_note_prefix">Note: %1$s</string>
 
     <string name="edit">Edit</string>
+
+    <!-- Ratings & Reviews -->
+    <string name="reviews">Reviews</string>
+    <string name="add_review">Add review</string>
+    <string name="edit_review">Edit review</string>
+    <string name="delete">Delete</string>
+    <string name="your_name">Your name</string>
+    <string name="your_review">Your review</string>
+    <string name="submit">Submit</string>
+    <string name="no_reviews_yet">No reviews yet</string>
+    <string name="based_on_reviews">Based on %1$d reviews</string>
+    <string name="no_reviews_summary">No reviews yet</string>
+
+    <string name="rating">Rating</string>
+    <string name="rating_value">%1$d / 5</string>
+    <string name="rating_required">Please select a rating (1–5).</string>
+    <string name="your_name_required">Please enter your name.</string>
+    <string name="review_too_long">Review must be %1$d characters or less.</string>
+
+    <string name="delete_review_title">Delete review</string>
+    <string name="delete_review_message">Are you sure you want to delete this review?</string>
+
+    <string name="rating_content_description">%1$d out of 5 stars</string>
 </resources>

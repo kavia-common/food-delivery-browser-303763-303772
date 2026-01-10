@@ -20,6 +20,10 @@
         android:layout_marginTop="@dimen/space_xs"
         android:textAppearance="@style/TextAppearance.FoodDelivery.BodySmall" />
 
+    <include
+        android:id="@+id/ratingsSection"
+        layout="@layout/view_ratings_section" />
+
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/categoryChipGroup"
         android:layout_width="match_parent"

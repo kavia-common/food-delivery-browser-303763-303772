@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         FavoritesRepository.initialize(this)
         AppPreferencesRepository.initialize(this)
         DeliveryRepository.initialize(this)
+        org.example.app.data.ratings.RatingsRepository.initialize(this)
 
         // Apply the persisted theme mode as early as possible.
         applyThemeMode(AppPreferencesRepository.themeMode.value ?: AppPreferencesRepository.ThemeMode.SYSTEM)

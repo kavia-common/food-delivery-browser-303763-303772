@@ -13,6 +13,9 @@ import com.google.android.material.button.MaterialButton
 import org.example.app.R
 import org.example.app.common.Formatters
 import org.example.app.data.models.MenuItem
+import org.example.app.data.ratings.RatingsRepository
+import org.example.app.data.ratings.ReviewTarget
+import org.example.app.data.ratings.ReviewTargetType
 import org.example.app.ui.common.MotionUtils
 
 class MenuItemAdapter(
@@ -22,7 +25,8 @@ class MenuItemAdapter(
     private val onDec: (MenuItem) -> Unit,
     private val getQuantity: (String) -> Int,
     private val isFavorited: (String) -> Boolean,
-    private val onToggleFavorite: (String) -> Unit
+    private val onToggleFavorite: (String) -> Unit,
+    private val onOpenReviews: (MenuItem) -> Unit
 ) : ListAdapter<MenuItem, MenuItemAdapter.VH>(Diff) {
 
     object Diff : DiffUtil.ItemCallback<MenuItem>() {
@@ -34,6 +38,7 @@ class MenuItemAdapter(
         val vegIcon: ImageView = itemView.findViewById(R.id.vegIcon)
         val name: TextView = itemView.findViewById(R.id.menuItemName)
         val desc: TextView = itemView.findViewById(R.id.menuItemDesc)
+        val ratingMeta: TextView = itemView.findViewById(R.id.menuItemRatingMeta)
         val price: TextView = itemView.findViewById(R.id.menuItemPrice)
         val customizableHint: TextView = itemView.findViewById(R.id.menuItemCustomizableHint)
 
@@ -66,12 +71,27 @@ class MenuItemAdapter(
         holder.customizableHint.isVisible = hasOptions
         holder.customizableHint.text = holder.itemView.context.getString(R.string.customizable)
 
+        // Optional rating snippet for menu item if user reviews exist.
+        val agg = RatingsRepository.getAggregateNow(ReviewTarget(ReviewTargetType.MENU_ITEM, item.id))
+        if (agg != null && agg.count > 0) {
+            holder.ratingMeta.isVisible = true
+            holder.ratingMeta.text = "${Formatters.ratingText(agg.average)} ★ (${agg.count})"
+            holder.ratingMeta.contentDescription =
+                holder.itemView.context.getString(R.string.based_on_reviews, agg.count)
+            holder.ratingMeta.setOnClickListener { onOpenReviews(item) }
+        } else {
+            holder.ratingMeta.isVisible = false
+            holder.ratingMeta.setOnClickListener(null)
+        }
+
         val fav = isFavorited(item.id)
         holder.favoriteToggle.setImageResource(if (fav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
+        holder.favoriteToggle.contentDescription = holder.itemView.context.getString(R.string.favorite)
         holder.favoriteToggle.setOnClickListener {
             onToggleFavorite(item.id)
             val nowFav = isFavorited(item.id)
             holder.favoriteToggle.setImageResource(if (nowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
+            holder.favoriteToggle.contentDescription = holder.itemView.context.getString(R.string.favorite)
         }
 
         val q = getQuantity(item.id) // total across configurations

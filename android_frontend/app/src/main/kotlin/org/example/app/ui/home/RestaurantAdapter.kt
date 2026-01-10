@@ -13,6 +13,9 @@ import org.example.app.R
 import org.example.app.common.Formatters
 import org.example.app.data.models.Restaurant
 import org.example.app.ui.common.MotionUtils
+import org.example.app.data.ratings.RatingsRepository
+import org.example.app.data.ratings.ReviewTarget
+import org.example.app.data.ratings.ReviewTargetType
 
 class RestaurantAdapter(
     private val onClick: (Restaurant) -> Unit,
@@ -50,7 +53,16 @@ class RestaurantAdapter(
 
         holder.name.text = restaurant.name
         holder.tags.text = restaurant.cuisineTags.joinToString(" • ")
-        holder.rating.text = Formatters.ratingText(restaurant.rating)
+
+        val agg = RatingsRepository.getAggregateNow(ReviewTarget(ReviewTargetType.RESTAURANT, restaurant.id))
+        holder.rating.text = if (agg != null && agg.count > 0) {
+            // Example: "4.6 ★ (12)"
+            "${Formatters.ratingText(agg.average)} ★ (${agg.count})"
+        } else {
+            // Fall back to mock rating when user hasn't reviewed yet.
+            Formatters.ratingText(restaurant.rating)
+        }
+
         holder.eta.text = Formatters.etaText(restaurant.etaMinutesMin, restaurant.etaMinutesMax)
 
         try {
@@ -61,12 +73,14 @@ class RestaurantAdapter(
 
         val fav = isFavorited(restaurant.id)
         holder.favoriteToggle.setImageResource(if (fav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
+        holder.favoriteToggle.contentDescription = holder.itemView.context.getString(R.string.favorite)
 
         holder.favoriteToggle.setOnClickListener {
             onToggleFavorite(restaurant.id)
             // Optimistic UI update; fragments also observe repository and may re-submit list.
             val nowFav = isFavorited(restaurant.id)
             holder.favoriteToggle.setImageResource(if (nowFav) R.drawable.ic_heart_filled else R.drawable.ic_heart_outline)
+            holder.favoriteToggle.contentDescription = holder.itemView.context.getString(R.string.favorite)
         }
 
         holder.itemView.setOnClickListener { onClick(restaurant) }
