@@ -33,6 +33,7 @@ class RestaurantAdapter(
 
     class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val banner: View = itemView.findViewById(R.id.banner)
+        val restaurantImage: ImageView = itemView.findViewById(R.id.restaurantImage)
         val name: TextView = itemView.findViewById(R.id.restaurantName)
         val tags: TextView = itemView.findViewById(R.id.restaurantTags)
         val rating: TextView = itemView.findViewById(R.id.restaurantRating)
@@ -53,6 +54,12 @@ class RestaurantAdapter(
 
         holder.name.text = restaurant.name
         holder.tags.text = restaurant.cuisineTags.joinToString(" • ")
+
+        // No external image loading in this demo; always show a local placeholder.
+        // imageUrl is kept for forward compatibility / future local mapping.
+        holder.restaurantImage.setImageResource(R.drawable.ic_placeholder_restaurant)
+        holder.restaurantImage.contentDescription =
+            holder.itemView.context.getString(R.string.restaurant_image)
 
         val agg = RatingsRepository.getAggregateNow(ReviewTarget(ReviewTargetType.RESTAURANT, restaurant.id))
         holder.rating.text = if (agg != null && agg.count > 0) {

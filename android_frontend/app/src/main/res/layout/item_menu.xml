@@ -69,6 +69,15 @@
         </LinearLayout>
 
         <ImageView
+            android:id="@+id/menuItemImage"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="@dimen/space_sm"
+            android:contentDescription="@string/menu_item_image"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_placeholder_food" />
+
+        <ImageView
             android:id="@+id/favoriteToggle"
             android:layout_width="24dp"
             android:layout_height="24dp"

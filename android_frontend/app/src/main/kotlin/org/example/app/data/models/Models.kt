@@ -10,7 +10,14 @@ data class Restaurant(
     val rating: Double,
     val etaMinutesMin: Int,
     val etaMinutesMax: Int,
-    val bannerColorHex: String
+    val bannerColorHex: String,
+    /**
+     * Optional image URL for restaurant thumbnail.
+     *
+     * This demo app avoids network calls; keep this nullable for forward compatibility
+     * and use local placeholders when absent.
+     */
+    val imageUrl: String? = null
 )
 
 /**
@@ -75,7 +82,14 @@ data class MenuItem(
     val priceCents: Int,
     val isVeg: Boolean,
     val variantGroups: List<VariantGroup> = emptyList(),
-    val addOnGroups: List<AddOnGroup> = emptyList()
+    val addOnGroups: List<AddOnGroup> = emptyList(),
+    /**
+     * Optional image URL for menu item thumbnail.
+     *
+     * The app is frontend-only and should not fetch remote images; use local placeholders
+     * in UI when this is null/blank.
+     */
+    val imageUrl: String? = null
 )
 
 /**

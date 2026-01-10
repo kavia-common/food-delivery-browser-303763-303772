@@ -42,6 +42,7 @@ class MenuItemAdapter(
         val price: TextView = itemView.findViewById(R.id.menuItemPrice)
         val customizableHint: TextView = itemView.findViewById(R.id.menuItemCustomizableHint)
 
+        val menuItemImage: ImageView = itemView.findViewById(R.id.menuItemImage)
         val favoriteToggle: ImageView = itemView.findViewById(R.id.favoriteToggle)
 
         val addButton: MaterialButton = itemView.findViewById(R.id.addButton)
@@ -66,6 +67,12 @@ class MenuItemAdapter(
         holder.desc.text = item.description
         holder.price.text = Formatters.moneyFromCents(item.priceCents)
         holder.vegIcon.setImageResource(if (item.isVeg) R.drawable.ic_veg else R.drawable.ic_nonveg)
+
+        // No external image loading in this demo; show local placeholder.
+        // imageUrl is kept for forward compatibility / future local mapping.
+        holder.menuItemImage.setImageResource(R.drawable.ic_placeholder_food)
+        holder.menuItemImage.contentDescription =
+            holder.itemView.context.getString(R.string.menu_item_image)
 
         val hasOptions = item.variantGroups.isNotEmpty() || item.addOnGroups.isNotEmpty()
         holder.customizableHint.isVisible = hasOptions
