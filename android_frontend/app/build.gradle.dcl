@@ -5,7 +5,7 @@ androidApplication {
         implementation("org.apache.commons:commons-text:1.11.0")
         implementation(project(":utilities"))
 
-        // UI + Material Components (classic Views)
+        // UI + Material Components (classic Views) + Material Motion transitions
         implementation("com.google.android.material:material:1.12.0")
 
         // AndroidX core UI building blocks

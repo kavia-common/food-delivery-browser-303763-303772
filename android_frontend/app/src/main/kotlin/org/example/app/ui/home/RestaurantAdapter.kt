@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.example.app.R
 import org.example.app.common.Formatters
 import org.example.app.data.models.Restaurant
+import org.example.app.ui.common.MotionUtils
 
 class RestaurantAdapter(
     private val onClick: (Restaurant) -> Unit,
@@ -44,6 +45,8 @@ class RestaurantAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val restaurant = getItem(position)
+
+        MotionUtils.animateListItemAppearIfNeeded(holder.itemView)
 
         holder.name.text = restaurant.name
         holder.tags.text = restaurant.cuisineTags.joinToString(" • ")

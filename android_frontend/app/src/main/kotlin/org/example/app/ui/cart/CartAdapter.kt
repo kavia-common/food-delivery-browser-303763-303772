@@ -14,6 +14,7 @@ import org.example.app.common.Formatters
 import org.example.app.data.models.CartLine
 import org.example.app.data.models.buildConfigurationSummary
 import org.example.app.data.models.computeOptionsDeltaCents
+import org.example.app.ui.common.MotionUtils
 
 class CartAdapter(
     private val onInc: (CartLine) -> Unit,
@@ -52,6 +53,8 @@ class CartAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val line = getItem(position)
 
+        MotionUtils.animateListItemAppearIfNeeded(holder.itemView)
+
         holder.name.text = line.item.name
 
         val summary = buildConfigurationSummary(line.item, line.configuration)
@@ -71,8 +74,16 @@ class CartAdapter(
         holder.qty.text = line.quantity.toString()
         holder.lineTotal.text = Formatters.moneyFromCents(unitPrice * line.quantity)
 
-        holder.plus.setOnClickListener { onInc(line) }
-        holder.minus.setOnClickListener { onDec(line) }
+        holder.plus.setOnClickListener {
+            MotionUtils.animateTapBounce(holder.plus)
+            MotionUtils.performHapticClick(holder.plus)
+            onInc(line)
+        }
+        holder.minus.setOnClickListener {
+            MotionUtils.animateTapBounce(holder.minus)
+            MotionUtils.performHapticClick(holder.minus)
+            onDec(line)
+        }
         holder.edit.setOnClickListener { onEdit(line) }
         holder.remove.setOnClickListener { onRemove(line) }
 

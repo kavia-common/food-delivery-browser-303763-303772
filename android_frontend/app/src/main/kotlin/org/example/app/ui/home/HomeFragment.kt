@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.TextView
 import androidx.core.view.isVisible
+import org.example.app.ui.common.MotionUtils
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -100,6 +101,7 @@ class HomeFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
+        recyclerView.itemAnimator = MotionUtils.createSubtleItemAnimator(requireContext())
 
         setupFilterChips()
         setupSearch()

@@ -13,6 +13,7 @@ import com.google.android.material.button.MaterialButton
 import org.example.app.R
 import org.example.app.common.Formatters
 import org.example.app.data.models.MenuItem
+import org.example.app.ui.common.MotionUtils
 
 class MenuItemAdapter(
     private val onItemClick: (MenuItem) -> Unit,
@@ -54,6 +55,8 @@ class MenuItemAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val item = getItem(position)
 
+        MotionUtils.animateListItemAppearIfNeeded(holder.itemView)
+
         holder.name.text = item.name
         holder.desc.text = item.description
         holder.price.text = Formatters.moneyFromCents(item.priceCents)
@@ -76,9 +79,21 @@ class MenuItemAdapter(
         holder.qtyContainer.isVisible = q > 0
         holder.qtyText.text = q.toString()
 
-        holder.addButton.setOnClickListener { onAdd(item) }
-        holder.plusButton.setOnClickListener { onInc(item) }
-        holder.minusButton.setOnClickListener { onDec(item) }
+        holder.addButton.setOnClickListener {
+            MotionUtils.animateTapBounce(holder.addButton)
+            MotionUtils.performHapticClick(holder.addButton)
+            onAdd(item)
+        }
+        holder.plusButton.setOnClickListener {
+            MotionUtils.animateTapBounce(holder.plusButton)
+            MotionUtils.performHapticClick(holder.plusButton)
+            onInc(item)
+        }
+        holder.minusButton.setOnClickListener {
+            MotionUtils.animateTapBounce(holder.minusButton)
+            MotionUtils.performHapticClick(holder.minusButton)
+            onDec(item)
+        }
 
         // Tap anywhere on row to customize/add.
         holder.itemView.setOnClickListener { onItemClick(item) }

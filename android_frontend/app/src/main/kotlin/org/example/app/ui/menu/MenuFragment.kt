@@ -19,6 +19,7 @@ import org.example.app.data.favorites.FavoritesRepository
 import org.example.app.data.mock.MockData
 import org.example.app.data.models.ItemConfiguration
 import org.example.app.data.models.MenuItem
+import org.example.app.ui.common.MotionUtils
 
 class MenuFragment : Fragment() {
 
@@ -83,6 +84,7 @@ class MenuFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
+        recyclerView.itemAnimator = MotionUtils.createSubtleItemAnimator(requireContext())
 
         setupCategoryChips()
 

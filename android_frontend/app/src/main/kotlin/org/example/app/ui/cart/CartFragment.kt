@@ -21,6 +21,7 @@ import org.example.app.data.cart.PromoApplyResult
 import org.example.app.data.delivery.DeliveryRepository
 import org.example.app.data.mock.MockData
 import org.example.app.data.models.CartLine
+import org.example.app.ui.common.MotionUtils
 import org.example.app.ui.menu.ItemOptionsBottomSheet
 
 class CartFragment : Fragment() {
@@ -79,6 +80,7 @@ class CartFragment : Fragment() {
         recyclerView = view.findViewById(R.id.cartRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = adapter
+        recyclerView.itemAnimator = MotionUtils.createSubtleItemAnimator(requireContext())
 
         emptyState = view.findViewById(R.id.emptyState)
         totalsContainer = view.findViewById(R.id.totalsContainer)

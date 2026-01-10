@@ -1,4 +1,6 @@
 <resources>
+    <!-- Internal tag IDs (used for subtle list animations) -->
+    <item type="id" name="tag_has_appeared" />
     <string name="app_name">Food Delivery</string>
 
     <string name="nav_home">Home</string>

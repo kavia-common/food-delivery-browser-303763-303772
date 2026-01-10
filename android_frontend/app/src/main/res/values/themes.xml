@@ -12,6 +12,9 @@
         <item name="colorSecondary">@color/app_success</item>
         <item name="colorSecondaryVariant">@color/app_success</item>
 
+        <!-- Theme-aware ripple (subtle) -->
+        <item name="colorControlHighlight">@color/ripple_color</item>
+
         <!-- Semantic surfaces -->
         <item name="android:colorBackground">@color/app_background</item>
         <item name="colorSurface">@color/app_surface</item>
@@ -52,5 +55,37 @@
 
     <style name="TextAppearance.FoodDelivery.BodySmall" parent="TextAppearance.MaterialComponents.Body2">
         <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Common shapes/elevation to keep UI consistent -->
+    <style name="Widget.FoodDelivery.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">@dimen/card_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="strokeColor">@color/app_divider</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="android:backgroundTint">?attr/colorSurface</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Widget.FoodDelivery.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipCornerRadius">@dimen/chip_radius</item>
+        <item name="rippleColor">@color/ripple_color</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Widget.FoodDelivery.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+    </style>
+
+    <style name="Widget.FoodDelivery.Button.IconSmall" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/button_corner_radius</item>
+        <item name="android:layout_width">@dimen/icon_button_size</item>
+        <item name="android:layout_height">@dimen/icon_button_size</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minWidth">@dimen/icon_button_size</item>
+        <item name="android:minHeight">@dimen/icon_button_size</item>
     </style>
 </resources>

@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.FoodDelivery.Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/space_md"
-    app:cardCornerRadius="@dimen/card_radius"
-    app:cardElevation="0dp"
-    app:strokeColor="@color/app_divider"
-    app:strokeWidth="1dp"
-    android:backgroundTint="?attr/colorSurface">
+    android:layout_marginBottom="@dimen/space_md">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,11 +73,8 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cartMinusButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="@string/minus"
-                app:cornerRadius="12dp" />
+                style="@style/Widget.FoodDelivery.Button.IconSmall"
+                android:text="@string/minus" />
 
             <TextView
                 android:id="@+id/cartQtyText"
@@ -93,11 +86,8 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/cartPlusButton"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:text="@string/plus"
-                app:cornerRadius="12dp" />
+                style="@style/Widget.FoodDelivery.Button.IconSmall"
+                android:text="@string/plus" />
 
             <View
                 android:layout_width="0dp"
